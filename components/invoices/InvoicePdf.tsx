@@ -49,7 +49,12 @@ const InvoicePdf: React.FC<Props> = (props) => {
       15,
       20
     );
-    let brokerInfo = [broker.dba, broker.address.address1];
+
+    doc.setFont("verdana", "bold");
+    doc.text(broker.dba, 15, 55);
+
+    doc.setFont("verdana", "normal");
+    let brokerInfo = [broker.address.address1];
 
     if (broker.address.address2) {
       brokerInfo = brokerInfo.concat(broker.address.address2);
@@ -64,7 +69,7 @@ const InvoicePdf: React.FC<Props> = (props) => {
       broker.accountingEmail,
     ]);
 
-    doc.text(brokerInfo, 15, 55);
+    doc.text(brokerInfo, 15, 60);
 
     doc.setFont("courier", "bold");
     doc.setFontSize(15);
