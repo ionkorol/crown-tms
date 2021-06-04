@@ -24,7 +24,7 @@ export interface BrokerProp {
   phone: string;
   fax: string;
   billingEmail: string;
-  acountingEmail: string;
+  accountingEmail: string;
   terms: string;
 }
 
