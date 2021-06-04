@@ -49,20 +49,23 @@ const InvoicePdf: React.FC<Props> = (props) => {
       15,
       20
     );
-    doc.text(
-      [
-        broker.dba,
-        broker.address.address1,
-        broker.address.address2,
-        `${broker.address.city}, ${broker.address.state}, ${broker.address.zipCode}`,
-        `${broker.phone} phone`,
-        "",
-        broker.billingEmail,
-        broker.acountingEmail,
-      ],
-      15,
-      55
-    );
+    let brokerInfo = [broker.dba, broker.address.address1];
+
+    if (broker.address.address2) {
+      brokerInfo = brokerInfo.concat(broker.address.address2);
+    }
+
+    brokerInfo = brokerInfo.concat([
+      `${broker.address.city}, ${broker.address.state}, ${broker.address.zipCode}`,
+      "",
+      `${broker.phone} phone`,
+      "",
+      broker.billingEmail,
+      broker.accountingEmail,
+    ]);
+
+    doc.text(brokerInfo, 15, 55);
+
     doc.setFont("courier", "bold");
     doc.setFontSize(15);
     doc.text(data.date, 15, 100);
@@ -185,7 +188,7 @@ const InvoicePdf: React.FC<Props> = (props) => {
                 <a href="#">{broker.billingEmail}</a>
               </p>
               <p>
-                <a href="#">{broker.acountingEmail}</a>
+                <a href="#">{broker.accountingEmail}</a>
               </p>
             </div>
           </div>
