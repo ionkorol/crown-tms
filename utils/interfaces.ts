@@ -18,6 +18,8 @@ export interface BrokerProp {
   id: string;
   name: string;
   dba?: string;
+  mc: string;
+  usdot: string;
   address: AddressProp;
   phone: string;
   fax: string;
@@ -26,13 +28,13 @@ export interface BrokerProp {
   terms: string;
 }
 
-interface JobProp {
+export interface JobProp {
   name: string;
   address: AddressProp;
   date: string;
 }
 
-interface AddressProp {
+export interface AddressProp {
   address1: string;
   address2: string;
   city: string;

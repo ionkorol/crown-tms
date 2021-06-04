@@ -1,4 +1,4 @@
-import "../styles/globals.scss";
+import "styles/globals.scss";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCrown, faFileInvoice, faPencilAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 

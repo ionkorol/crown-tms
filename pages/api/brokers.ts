@@ -6,6 +6,7 @@ import { BrokerProp, InvoiceProp } from "utils/interfaces";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
+    // Add Broker
     try {
       const data = req.body as BrokerProp;
       const docRef = await firestoreAdmin()

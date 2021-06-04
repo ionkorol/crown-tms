@@ -65,13 +65,7 @@ const InvoicePdf: React.FC<Props> = (props) => {
     );
     doc.setFont("courier", "bold");
     doc.setFontSize(15);
-    doc.text(
-      `${("0" + (new Date().getMonth() + 1)).slice(-2)}/${(
-        "0" + new Date().getDate()
-      ).slice(-2)}/${new Date().getFullYear()}`,
-      15,
-      100
-    );
+    doc.text(data.date, 15, 100);
 
     doc.text(`INVOICE# ${data.id}`, 95, 100);
 

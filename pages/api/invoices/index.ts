@@ -24,9 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         .doc(String(currentId))
         .set({
           id: currentId,
-          date: Date.now(),
-          rate: 100,
-          additionalItems: data.additionalItems || [],
+          ...data,
         });
 
       res.status(200).json({ id: currentId });
