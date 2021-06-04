@@ -22,7 +22,7 @@ const InvoicePdf: React.FC<Props> = (props) => {
     const doc = new jsPDF({
       orientation: "p",
       unit: "mm",
-      format: "a4",
+      format: "letter",
     });
     doc.setProperties({
       title: `Invoice# ${data.id}`,
@@ -136,7 +136,7 @@ const InvoicePdf: React.FC<Props> = (props) => {
         "**Thank you for your business. We look forward to continuing working with you.",
       ],
       15,
-      275
+      265
     );
 
     console.log(doc.output("blob"));
