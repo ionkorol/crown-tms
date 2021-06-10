@@ -27,7 +27,7 @@ const DataTable: React.FC<Props> = (props) => {
     actions: invoice,
   }));
   const columns: GridColDef[] = [
-    { field: "id", headerName: "Number" },
+    { field: "id", headerName: "#", width: 100 },
     { field: "broker", headerName: "Broker", flex: 3 },
     {
       type: "number",
@@ -43,8 +43,17 @@ const DataTable: React.FC<Props> = (props) => {
     {
       field: "actions",
       headerName: "Actions",
+      flex: 1,
+      align: "center",
       renderCell: (params: GridCellParams) => (
         <div>
+          <Button
+            href={`/invoices/${params.id}`}
+            className="mr-1"
+            target="_blank"
+          >
+            <FontAwesomeIcon icon="file-invoice" color="#fff" />
+          </Button>
           <Button
             onClick={() => handleEdit(params.value as InvoiceProp)}
             variant="warning"
