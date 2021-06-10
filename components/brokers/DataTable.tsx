@@ -41,14 +41,14 @@ const DataTable: React.FC<Props> = (props) => {
       renderCell: (params: GridCellParams) => (
         <div>
           <Button
-            onClick={() => handleEdit(params.value)}
+            onClick={() => handleEdit(params.value as BrokerProp)}
             variant="warning"
             className="mr-1"
           >
             <FontAwesomeIcon icon="pencil-alt" color="#fff" />
           </Button>
           <Button
-            onClick={() => handleDelete(params.value.id)}
+            onClick={() => handleDelete((params.value as BrokerProp).id)}
             variant="danger"
           >
             <FontAwesomeIcon icon="trash-alt" color="#fff" />
