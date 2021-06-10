@@ -23,8 +23,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         .collection("invoices")
         .doc(String(currentId))
         .set({
-          id: currentId,
           ...data,
+          id: currentId,
         });
 
       res.status(200).json({ id: currentId });

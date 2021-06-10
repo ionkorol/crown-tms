@@ -14,6 +14,30 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const data = snap.data();
 
     res.status(200).json(data);
+  } else if (req.method === "PATCH") {
+    const data = req.body;
+    try {
+      await firestoreAdmin()
+        .collection("brokers")
+        .doc(brokerId as string)
+        .set({
+          id: brokerId,
+          ...data,
+        });
+      res.status(200).json({ id: brokerId });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  } else if (req.method === "DELETE") {
+    try {
+      await firestoreAdmin()
+        .collection("brokers")
+        .doc(brokerId as string)
+        .delete();
+      res.status(200).end();
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   } else {
     res.status(500).end();
   }

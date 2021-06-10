@@ -12,6 +12,7 @@ export interface InvoiceProp {
     title: string;
     amount: number;
   }[];
+  isTonu: boolean;
 }
 
 export interface BrokerProp {
