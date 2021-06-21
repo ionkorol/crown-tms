@@ -74,7 +74,7 @@ const DataTable: React.FC<Props> = (props) => {
       ({
         id: invoice.id,
         broker: invoice.broker.dba,
-        amount: invoice.rate,
+        amount: invoice.load.rate,
         actions: invoice,
       } as GridRowModel)
   );
