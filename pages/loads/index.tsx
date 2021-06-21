@@ -2,8 +2,6 @@ import React from "react";
 import { GetServerSideProps } from "next";
 import { Layout } from "components/common";
 import nookies from "nookies";
-
-import styles from "./Loads.module.scss";
 import { auth } from "firebase-admin";
 import { LoadProp } from "utils/interfaces";
 import { DataTable } from "components/loads";
@@ -21,6 +19,7 @@ import {
 
 interface Props {
   data: LoadProp[];
+  error?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -35,8 +34,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Loads: React.FC<Props> = (props) => {
-  const { data } = props;
+  const { data, error } = props;
   const classes = useStyles();
+  if (error) {
+    console.log(error);
+    return <div>Error</div>;
+  }
   return (
     <Layout>
       <Grid container className={classes.controls}>
@@ -85,9 +88,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   } catch (error) {
     return {
-      redirect: {
-        destination: "/",
-        permanent: false,
+      props: {
+        error,
       },
     };
   }
