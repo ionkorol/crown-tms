@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import { NextApiRequest, NextApiResponse } from "next";
-import { firestoreAdmin } from "utils/firebaseAdmin";
+import { firestore } from "utils/firebaseAdmin";
 import { BrokerProp, InvoiceProp } from "utils/interfaces";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // Add Broker
     try {
       const data = req.body as BrokerProp;
-      const docRef = await firestoreAdmin()
+      const docRef = await firestore()
         .collection("brokers")
         .add({
           ...data,
@@ -24,7 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(500).json({ error: error.message });
     }
   } else if (req.method === "GET") {
-    const brokersQuery = await firestoreAdmin().collection("brokers").get();
+    const brokersQuery = await firestore().collection("brokers").get();
     const brokersData = brokersQuery.docs.map((item) => item.data());
 
     res.status(200).json(brokersData);

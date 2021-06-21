@@ -1,39 +1,72 @@
 import React from "react";
+import { useAuth } from "lib";
 import {
-  Navbar,
-  NavDropdown,
-  Form,
-  FormControl,
-  Button,
-  Nav,
-} from "react-bootstrap";
-import { Logo } from "components/common";
+  Drawer,
+  Toolbar,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  createStyles,
+  Theme,
+  makeStyles,
+} from "@material-ui/core";
+import {Business, Description, Work, People} from '@material-ui/icons'
 import Link from "next/link";
+const drawerWidth = 240;
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      display: "flex",
+    },
+    appBar: {
+      zIndex: theme.zIndex.drawer + 1,
+    },
+    drawer: {
+      width: drawerWidth,
+      flexShrink: 0,
+    },
+    drawerPaper: {
+      width: drawerWidth,
+    },
+    drawerContainer: {
+      overflow: "auto",
+    },
+  })
+);
 
 const Navigation = () => {
+  const auth = useAuth();
+  const classes = useStyles();
   return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="#home">
-        <Logo />
-      </Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mr-auto">
-          <Link href="/" passHref>
-            <Nav.Link>Home</Nav.Link>
-          </Link>
-          <Link href="/invoices" passHref>
-            <Nav.Link>Invoices</Nav.Link>
-          </Link>
-          <Link href="/brokers" passHref>
-            <Nav.Link>Brokers</Nav.Link>
-          </Link>
-          <Link href="/" passHref>
-            <Nav.Link>Home</Nav.Link>
-          </Link>
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+    <Drawer
+      className={classes.drawer}
+      variant="permanent"
+      classes={{
+        paper: classes.drawerPaper,
+      }}
+    >
+      <Toolbar />
+      <div className={classes.drawerContainer}>
+        <List>
+          {["Loads", "Brokers", "Invoices", "Users"].map((text, index) => (
+            <Link href={`/${text.toLowerCase()}`} key={text}>
+              <ListItem button>
+                <ListItemIcon>
+                  {text==="Loads" && <Work />}
+                  {text==="Brokers" && <Business />}
+                  {text==="Invoices" && <Description />}
+                  {text==="Users" && <People />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            </Link>
+          ))}
+        </List>
+      </div>
+    </Drawer>
   );
 };
 

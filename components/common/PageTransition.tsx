@@ -47,7 +47,7 @@ const NextNProgress = (props) => {
       #nprogress .bar {
         background: ${color};
         position: fixed;
-        z-index: 1031;
+        z-index: 9999;
         top: 0;
         left: 0;
         width: 100%;

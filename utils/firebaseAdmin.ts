@@ -1,4 +1,4 @@
-import admin, { firestore } from "firebase-admin";
+import admin from "firebase-admin";
 
 import serviceAccount from "./firebase-admin.json";
 
@@ -8,4 +8,6 @@ if (!admin.apps.length) {
   });
 }
 
-export { firestore as firestoreAdmin };
+const { firestore, auth, storage } = admin;
+
+export { firestore, auth, storage };

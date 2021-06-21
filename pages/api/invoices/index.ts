@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import { NextApiRequest, NextApiResponse } from "next";
-import { firestoreAdmin } from "utils/firebaseAdmin";
+import { firestore } from "utils/firebaseAdmin";
 import { InvoiceProp } from "utils/interfaces";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -10,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const data = req.body as InvoiceProp;
 
       const lastId = (
-        await firestoreAdmin()
+        await firestore()
           .collection("invoices")
           .orderBy("id")
           .limitToLast(1)
@@ -19,12 +19,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       const currentId = lastId + 1;
 
-      await firestoreAdmin()
+      await firestore()
         .collection("invoices")
         .doc(String(currentId))
         .set({
           ...data,
           id: currentId,
+          date: new Date().toLocaleDateString(),
         });
 
       res.status(200).json({ id: currentId });
@@ -32,7 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(500).json({ error: error.message });
     }
   } else if (req.method === "GET") {
-    const invoicesQuery = await firestoreAdmin().collection("invoices").get();
+    const invoicesQuery = await firestore().collection("invoices").get();
     let invoicesData = [];
     for (const invoiceSnap of invoicesQuery.docs) {
       const invoiceData = invoiceSnap.data();

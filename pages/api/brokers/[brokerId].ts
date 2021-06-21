@@ -1,13 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import { NextApiRequest, NextApiResponse } from "next";
-import { firestoreAdmin } from "utils/firebaseAdmin";
+import { firestore } from "utils/firebaseAdmin";
 import { BrokerProp } from "utils/interfaces";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { brokerId } = req.query;
   if (req.method === "GET") {
-    const snap = await firestoreAdmin()
+    const snap = await firestore()
       .collection("brokers")
       .doc(brokerId as string)
       .get();
@@ -17,7 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   } else if (req.method === "PATCH") {
     const data = req.body;
     try {
-      await firestoreAdmin()
+      await firestore()
         .collection("brokers")
         .doc(brokerId as string)
         .set({
@@ -30,7 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } else if (req.method === "DELETE") {
     try {
-      await firestoreAdmin()
+      await firestore()
         .collection("brokers")
         .doc(brokerId as string)
         .delete();

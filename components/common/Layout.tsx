@@ -1,20 +1,36 @@
 import React from "react";
-import { Container } from "react-bootstrap";
-import { Navigation } from "components/common";
-import styles from "./Layout.module.scss";
+import { Navigation, Header } from "components/common";
+import {
+  createStyles,
+  CssBaseline,
+  makeStyles,
+  Theme,
+  Toolbar,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: { display: "flex" },
+    content: {
+      flexGrow: 1,
+      padding: theme.spacing(3),
+    },
+  })
+);
 
 const Layout = (props) => {
+  const classes = useStyles();
   return (
-    <Container fluid className={styles.container}>
-      <Navigation />
-      <main className={styles.main}>{props.children}</main>
+    <div className={classes.root}>
+      <CssBaseline />
 
-      <footer className={styles.footer}>
-        <a href="/">
-          Powered by <span className={styles.logo}>Crown TMS</span>
-        </a>
-      </footer>
-    </Container>
+      <Header />
+      <Navigation />
+      <main className={classes.content}>
+        <Toolbar />
+        {props.children}
+      </main>
+    </div>
   );
 };
 

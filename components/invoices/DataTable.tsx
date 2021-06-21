@@ -3,6 +3,7 @@ import {
   DataGrid,
   GridCellParams,
   GridColDef,
+  GridRowModel,
   GridRowsProp,
   GridToolbar,
   GridValueFormatterParams,
@@ -20,12 +21,6 @@ interface Props {
 const DataTable: React.FC<Props> = (props) => {
   const { data, handleDelete, handleEdit } = props;
 
-  const rows: GridRowsProp = data.map((invoice) => ({
-    id: invoice.id,
-    broker: invoice.broker.dba,
-    amount: invoice.rate,
-    actions: invoice,
-  }));
   const columns: GridColDef[] = [
     { field: "id", headerName: "#", width: 100 },
     { field: "broker", headerName: "Broker", flex: 3 },
@@ -73,6 +68,16 @@ const DataTable: React.FC<Props> = (props) => {
       ),
     },
   ];
+
+  const rows = data.map(
+    (invoice) =>
+      ({
+        id: invoice.id,
+        broker: invoice.broker.dba,
+        amount: invoice.rate,
+        actions: invoice,
+      } as GridRowModel)
+  );
 
   return (
     <div style={{ display: "flex", height: "100%" }}>

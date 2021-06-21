@@ -1,0 +1,44 @@
+import { createMuiTheme } from "@material-ui/core/styles";
+import red from "@material-ui/core/colors/red";
+import { green } from "@material-ui/core/colors";
+
+// Create a theme instance.
+const theme = createMuiTheme({
+  palette: {
+    type: "dark",
+    primary: {
+      main: "#ffbb48",
+      contrastText: "#fff",
+    },
+    secondary: {
+      main: "#293142",
+    },
+    error: {
+      main: red.A400,
+    },
+    success: {
+      main: green.A400,
+    },
+    background: {
+      default: "#1c2531",
+      paper: "#293142",
+    },
+    text: {
+      primary: "#fff",
+      secondary: "#919eab",
+    },
+  },
+  shape: {
+    borderRadius: 20,
+  },
+  typography: {},
+  overrides: {
+    MuiCardContent: {
+      root: {
+        padding: 0,
+      },
+    },
+  },
+});
+
+export default theme;

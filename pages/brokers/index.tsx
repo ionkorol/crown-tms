@@ -1,15 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { Layout } from "components/common";
-import { Button, Table } from "react-bootstrap";
-import styles from "./Brokers.module.scss";
 import { AddModal, DataTable } from "components/brokers";
 import { GetServerSideProps } from "next";
 import { BrokerProp } from "utils/interfaces";
+import {
+  Breadcrumbs,
+  createStyles,
+  Grid,
+  makeStyles,
+  Theme,
+  Typography,
+  Button,
+} from "@material-ui/core";
+import Link from "next/link";
+import { Add } from "@material-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface Props {
   data: BrokerProp[];
 }
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    controls: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: theme.spacing(2),
+    },
+  })
+);
 
 const Brokers: React.FC<Props> = (props) => {
   const { data } = props;
@@ -18,15 +38,17 @@ const Brokers: React.FC<Props> = (props) => {
   const [showEdit, setShowEdit] = useState(false);
   const [editBroker, setEditBroker] = useState(null);
 
+  const classes = useStyles();
+
   const handleDelete = async (brokerId: string) => {
     try {
       await fetch(`/api/brokers/${brokerId}`, {
         method: "DELETE",
       });
-      console.log("Deleted", brokerId);
+      alert(`Deleted ${brokerId}`);
       await handleRefresh();
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   };
 
@@ -40,10 +62,10 @@ const Brokers: React.FC<Props> = (props) => {
         body: JSON.stringify({ ...values }),
       });
       const data = await res.json();
-      console.log("Added", data.id);
+      alert(`Added ${data.id}`);
       await handleRefresh();
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   };
 
@@ -57,10 +79,10 @@ const Brokers: React.FC<Props> = (props) => {
         body: JSON.stringify({ ...values }),
       });
       const data = await res.json();
-      console.log("Updated", data.id);
+      alert(`Updated ${data.id}`);
       await handleRefresh();
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   };
 
@@ -68,54 +90,30 @@ const Brokers: React.FC<Props> = (props) => {
     const res = await fetch("/api/brokers");
     const data = await res.json();
     setCurrentData(data);
-    console.log("Refresh");
+    alert("Refresh");
   };
 
   return (
     <Layout>
-      <div className={styles.controls}>
-        <Button onClick={() => setShowAdd(true)} variant="outline-success">
-          <FontAwesomeIcon icon="plus" /> Add
-        </Button>
-      </div>
-      {/* <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Terms</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentData.map((broker) => (
-            <tr key={broker.id}>
-              <td>{broker.name}</td>
-              <td>{broker.billingEmail}</td>
-              <td>{broker.terms}</td>
-              <td>
-                <Button
-                  onClick={() => {
-                    setEditBroker(broker);
-                    setShowEdit(true);
-                  }}
-                  variant="warning"
-                  className="mr-1"
-                >
-                  <FontAwesomeIcon icon="pencil-alt" color="#fff" />
-                </Button>
-                <Button
-                  onClick={() => handleDelete(broker.id)}
-                  variant="danger"
-                >
-                  <FontAwesomeIcon icon="trash-alt" color="#fff" />
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody> */}
-      {/* </Table> */}
-
+      <Grid container className={classes.controls}>
+        <Grid item>
+          <h1>Brokers</h1>
+          <Breadcrumbs>
+            <Link href="/">Dashboard</Link>
+            <Typography color="textPrimary">Brokers</Typography>
+          </Breadcrumbs>
+        </Grid>
+        <Grid item>
+          <Link href="/brokers/new" passHref>
+            <Button component="a" variant="contained" color="primary">
+              <Typography color="textPrimary">
+                <FontAwesomeIcon icon="plus" className="mr-1" />
+                New Broker
+              </Typography>
+            </Button>
+          </Link>
+        </Grid>
+      </Grid>
       <DataTable
         data={currentData}
         handleDelete={handleDelete}

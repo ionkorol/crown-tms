@@ -7,8 +7,9 @@ import {
   GridToolbar,
 } from "@material-ui/data-grid";
 import { BrokerProp } from "utils/interfaces";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "react-bootstrap";
+import { Delete, Visibility } from "@material-ui/icons";
+import { Box, IconButton, Paper } from "@material-ui/core";
+import Link from "next/link";
 
 interface Props {
   data: BrokerProp[];
@@ -24,12 +25,12 @@ const DataTable: React.FC<Props> = (props) => {
     name: broker.dba,
     email: broker.billingEmail,
     terms: broker.terms,
-    actions: broker,
+    actions: broker.id,
   }));
   const columns: GridColDef[] = [
     { field: "id", headerName: "id", hide: true },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "email", headerName: "Email", flex: 1 },
+    { field: "name", headerName: "Name", flex: 2 },
+    { field: "email", headerName: "Email", flex: 2 },
     {
       field: "terms",
       headerName: "Terms",
@@ -39,37 +40,33 @@ const DataTable: React.FC<Props> = (props) => {
       field: "actions",
       headerName: "Actions",
       renderCell: (params: GridCellParams) => (
-        <div>
-          <Button
-            onClick={() => handleEdit(params.value as BrokerProp)}
-            variant="warning"
-            className="mr-1"
+        <Box>
+          <Link href={`/brokers/${params.value}`}>
+            <IconButton>
+              <Visibility />
+            </IconButton>
+          </Link>
+          <IconButton
+            color="primary"
+            onClick={() => handleDelete(params.value as string)}
           >
-            <FontAwesomeIcon icon="pencil-alt" color="#fff" />
-          </Button>
-          <Button
-            onClick={() => handleDelete((params.value as BrokerProp).id)}
-            variant="danger"
-          >
-            <FontAwesomeIcon icon="trash-alt" color="#fff" />
-          </Button>
-        </div>
+            <Delete />
+          </IconButton>
+        </Box>
       ),
     },
   ];
 
   return (
-    <div style={{ display: "flex", height: "100%" }}>
-      <div style={{ flexGrow: 1 }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={10}
-          autoHeight
-          components={{ Toolbar: GridToolbar }}
-        />
-      </div>
-    </div>
+    <Paper style={{ flexGrow: 1 }}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={10}
+        autoHeight
+        components={{ Toolbar: GridToolbar }}
+      />
+    </Paper>
   );
 };
 

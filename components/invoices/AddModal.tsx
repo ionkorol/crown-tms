@@ -47,7 +47,7 @@ const schema = yup.object().shape({
       amount: yup.number().required("Required"),
     })
   ),
-  isTonu: yup.boolean().required("Required"),
+  isTonu: yup.boolean(),
 });
 
 const AddModal: React.FC<Props> = (props) => {
@@ -92,10 +92,10 @@ const AddModal: React.FC<Props> = (props) => {
                     },
                     date: "",
                   },
+                  isTonu: false,
                 },
             rate: invoiceData ? invoiceData.rate : 0,
             additionalItems: invoiceData ? invoiceData.additionalItems : [],
-            isTonu: invoiceData ? invoiceData.isTonu : false,
           }}
         >
           {({ handleChange, handleSubmit, values, errors, touched }) => (
@@ -160,7 +160,7 @@ const AddModal: React.FC<Props> = (props) => {
                   {getIn(errors, "load.shipper.address.address1")}
                 </Form.Control.Feedback>
               </Form.Group>
-              <Row>
+              <Form.Row>
                 <Form.Group as={Col} md={6}>
                   <Form.Label>City</Form.Label>
                   <Form.Control
@@ -200,7 +200,7 @@ const AddModal: React.FC<Props> = (props) => {
                     {getIn(errors, "load.shipper.address.zipCode")}
                   </Form.Control.Feedback>
                 </Form.Group>
-              </Row>
+              </Form.Row>
               <Form.Group>
                 <Form.Label>Date</Form.Label>
                 <Form.Control
@@ -216,6 +216,19 @@ const AddModal: React.FC<Props> = (props) => {
               </Form.Group>
               <h4>Cosigner Info</h4>
               <hr />
+              <Form.Group>
+                <Form.Check
+                  type="checkbox"
+                  label="Is TONU?"
+                  name="isTonu"
+                  value={values.load.isTonu}
+                  onChange={handleChange}
+                  isInvalid={!!getIn(errors, "isTonu")}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {getIn(errors, "isTonu")}
+                </Form.Control.Feedback>
+              </Form.Group>
               <Form.Group>
                 <Form.Label>Name</Form.Label>
                 <Form.Control
@@ -242,7 +255,7 @@ const AddModal: React.FC<Props> = (props) => {
                   {getIn(errors, "load.cosigner.address.address1")}
                 </Form.Control.Feedback>
               </Form.Group>
-              <Row>
+              <Form.Row>
                 <Form.Group as={Col} md={6}>
                   <Form.Label>City</Form.Label>
                   <Form.Control
@@ -282,7 +295,7 @@ const AddModal: React.FC<Props> = (props) => {
                     {getIn(errors, "load.cosigner.address.zipCode")}
                   </Form.Control.Feedback>
                 </Form.Group>
-              </Row>
+              </Form.Row>
               <Form.Group>
                 <Form.Label>Date</Form.Label>
                 <Form.Control
