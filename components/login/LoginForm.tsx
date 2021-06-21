@@ -1,5 +1,5 @@
 import { Formik } from "formik";
-import useAuth from "lib";
+import { useAuth } from "lib";
 import React from "react";
 import { Button, Form } from "react-bootstrap";
 import * as yup from "yup";
