@@ -2,7 +2,7 @@ import React from "react";
 import { GetServerSideProps } from "next";
 import { Layout } from "components/common";
 import nookies from "nookies";
-import { auth } from "firebase-admin";
+import { auth } from "utils/firebaseAdmin";
 import { LoadProp } from "utils/interfaces";
 import { DataTable } from "components/loads";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
