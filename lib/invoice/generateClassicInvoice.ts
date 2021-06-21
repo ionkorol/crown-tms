@@ -101,7 +101,7 @@ const generatePDF = async (data: InvoiceProp) => {
       [
         name,
         address.address1,
-        `${(address.city, address.state, address.zipCode)}`,
+        `${address.city}, ${address.state} ${address.zipCode}`,
       ],
       15,
       145
