@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Layout } from "components/common";
 import { Button, Table } from "react-bootstrap";
-import { AddModal } from "components/invoices";
 import { GetServerSideProps } from "next";
 import { BrokerProp, InvoiceProp } from "utils/interfaces";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -90,18 +89,6 @@ const Invoices: React.FC<Props> = (props) => {
           setEditInvoice(invoiceData);
           setShowEdit(true);
         }}
-      />
-
-      <AddModal
-        show={showAdd || showEdit}
-        handleClose={() => {
-          setShowAdd(false);
-          setShowEdit(false);
-          setEditInvoice(null);
-        }}
-        brokersData={brokersData}
-        handleSubmit={showEdit ? handleUpdate : handleAdd}
-        invoiceData={editInvoice}
       />
     </Layout>
   );
