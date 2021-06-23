@@ -53,6 +53,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         .collection("clients")
         .doc(userData.clientId)
         .collection("loads")
+        .orderBy("id")
+        .limitToLast(10)
         .get();
       let loadsData = [];
       for (const loadSnap of loadsQuery.docs) {

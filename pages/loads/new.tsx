@@ -2,7 +2,6 @@ import { Layout } from "components/common";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import React, { useState } from "react";
-import { Form } from "react-bootstrap";
 import nookies from "nookies";
 import { auth } from "utils/firebaseAdmin";
 import { BrokerProp, JobProp, LoadProp } from "utils/interfaces";
@@ -27,17 +26,14 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  ListItemAvatar,
   ListItemIcon,
-  Box,
   ListItemSecondaryAction,
   IconButton,
-  OutlinedInput,
 } from "@material-ui/core";
 import { useAuth } from "lib";
-import { Publish, GetApp } from "@material-ui/icons";
 
 import { ArrowBack, Delete, Add } from "@material-ui/icons";
+import { DropJobIcon, PickJobIcon } from "components/ui/Icons";
 
 interface Props {
   data: LoadProp[];
@@ -109,7 +105,7 @@ const NewLoad: React.FC<Props> = (props) => {
             references,
             isTonu,
             jobs,
-            rate,
+            rate: Number(rate),
           }),
         })
       ).json();
@@ -148,7 +144,7 @@ const NewLoad: React.FC<Props> = (props) => {
           </Link>
         </Grid>
       </Grid>
-      <Form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <Paper className="p-5">
@@ -292,9 +288,9 @@ const NewLoad: React.FC<Props> = (props) => {
                     <ListItem key={index} divider>
                       <ListItemIcon>
                         {job.type === "Pick" ? (
-                          <Publish color="secondary" />
+                          <PickJobIcon />
                         ) : (
-                          <GetApp color="error" />
+                          <DropJobIcon />
                         )}
                       </ListItemIcon>
                       <ListItemText>
@@ -308,7 +304,7 @@ const NewLoad: React.FC<Props> = (props) => {
           </Grid>
         </Grid>
         <Button type="submit">Submit</Button>
-      </Form>
+      </form>
       <JobsView
         onSubmit={(values) => setJobs((prevState) => [...prevState, values])}
         show={showAddJob}

@@ -6,20 +6,24 @@ import {
   GridRowModel,
   GridRowsProp,
   GridToolbar,
+  GridPanel,
   GridValueFormatterParams,
+  GridToolbarContainer,
 } from "@material-ui/data-grid";
 import { LoadProp } from "utils/interfaces";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  createStyles,
   Icon,
   IconButton,
-  makeStyles,
+  InputAdornment,
   Paper,
+  TextField,
 } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Visibility } from "@material-ui/icons";
 import Link from "next/link";
 import { formatCurrency } from "lib";
+import { Search, Check } from "@material-ui/icons";
 interface Props {
   data: LoadProp[];
   // handleDelete: (invoiceId: string) => void;
@@ -79,7 +83,7 @@ const DataTable: React.FC<Props> = (props) => {
         columns={columns}
         pageSize={10}
         autoHeight
-        components={{ Toolbar: GridToolbar }}
+        components={{ Toolbar: CustomToolbar }}
         className={classes.table}
       />
     </Paper>
@@ -87,3 +91,31 @@ const DataTable: React.FC<Props> = (props) => {
 };
 
 export default DataTable;
+
+const CustomToolbar = () => {
+  return (
+    <GridToolbarContainer>
+      <form>
+        <TextField
+          variant="outlined"
+          placeholder="Search for Invoice Number"
+          fullWidth
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton color="primary">
+                  <Check />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </form>
+    </GridToolbarContainer>
+  );
+};

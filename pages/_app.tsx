@@ -11,7 +11,7 @@ import {
 import React from "react";
 import { PageTransition } from "components/common";
 import AuthProvider from "utils/AuthProvider";
-import { ThemeProvider } from "@material-ui/core";
+import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "styles/theme";
 import "@fontsource/roboto";
 

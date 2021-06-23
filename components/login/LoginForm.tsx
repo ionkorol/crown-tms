@@ -1,7 +1,7 @@
-import { Formik } from "formik";
+import { Button, Grid, TextField } from "@material-ui/core";
+import { Formik, useFormik } from "formik";
 import { useAuth } from "lib";
 import React from "react";
-import { Button, Form } from "react-bootstrap";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -13,66 +13,67 @@ const schema = yup.object().shape({
 const LoginForm = () => {
   const auth = useAuth();
 
+  const formik = useFormik({
+    validationSchema: schema,
+    initialValues: {
+      clientId: "",
+      username: "",
+      password: "",
+    },
+    onSubmit: (values) =>
+      auth.signIn(values.clientId, values.username, values.password),
+  });
+
   return (
-    <Formik
-      onSubmit={(values) =>
-        auth.signIn(values.clientId, values.username, values.password)
-      }
-      validationSchema={schema}
-      initialValues={{
-        clientId: "",
-        username: "",
-        password: "",
-      }}
-    >
-      {({ handleSubmit, handleChange, values, errors }) => (
-        <Form noValidate onSubmit={handleSubmit}>
-          <Form.Group>
-            <Form.Label>Client ID</Form.Label>
-            <Form.Control
-              type="text"
-              name="clientId"
-              placeholder="Enter Client ID"
-              value={values.clientId}
-              onChange={handleChange}
-              isInvalid={!!errors.clientId}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.clientId}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="text"
-              name="username"
-              placeholder="Enter Username"
-              value={values.username}
-              onChange={handleChange}
-              isInvalid={!!errors.username}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.username}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              placeholder="Enter Password"
-              value={values.password}
-              onChange={handleChange}
-              isInvalid={!!errors.password}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.password}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Button type="submit">Log In</Button>
-        </Form>
-      )}
-    </Formik>
+    <form onSubmit={formik.handleSubmit}>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            name="clientId"
+            label="Client ID"
+            placeholder="Enter Client ID"
+            value={formik.values.clientId}
+            onChange={formik.handleChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            name="username"
+            label="Username"
+            placeholder="Enter Username"
+            value={formik.values.username}
+            onChange={formik.handleChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            variant="outlined"
+            type="password"
+            name="password"
+            label="Password"
+            placeholder="Enter Password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            fullWidth
+            size="large"
+          >
+            Log In
+          </Button>
+        </Grid>
+      </Grid>
+    </form>
   );
 };
 

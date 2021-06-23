@@ -14,11 +14,10 @@ import Link from "next/link";
 interface Props {
   data: BrokerProp[];
   handleDelete: (brokerId: string) => void;
-  handleEdit: (brokerData: BrokerProp) => void;
 }
 
 const DataTable: React.FC<Props> = (props) => {
-  const { data, handleDelete, handleEdit } = props;
+  const { data, handleDelete } = props;
 
   const rows: GridRowsProp = data.map((broker) => ({
     id: broker.id,

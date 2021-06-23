@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Layout } from "components/common";
-import { AddModal, DataTable } from "components/brokers";
+import { DataTable } from "components/brokers";
 import { GetServerSideProps } from "next";
 import { BrokerProp } from "utils/interfaces";
 import {
@@ -106,33 +106,13 @@ const Brokers: React.FC<Props> = (props) => {
         <Grid item>
           <Link href="/brokers/new" passHref>
             <Button component="a" variant="contained" color="primary">
-              <Typography color="textPrimary">
-                <FontAwesomeIcon icon="plus" className="mr-1" />
-                New Broker
-              </Typography>
+              <Add />
+              <Typography>New Broker</Typography>
             </Button>
           </Link>
         </Grid>
       </Grid>
-      <DataTable
-        data={currentData}
-        handleDelete={handleDelete}
-        handleEdit={(brokerData: BrokerProp) => {
-          setEditBroker(brokerData);
-          setShowEdit(true);
-        }}
-      />
-
-      <AddModal
-        show={showAdd || showEdit}
-        handleClose={() => {
-          setShowAdd(false);
-          setShowEdit(false);
-          setEditBroker(null);
-        }}
-        brokerData={editBroker}
-        handleSubmit={showEdit ? handleUpdate : handleAdd}
-      />
+      <DataTable data={currentData} handleDelete={handleDelete} />
     </Layout>
   );
 };

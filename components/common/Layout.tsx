@@ -1,12 +1,7 @@
 import React from "react";
 import { Navigation, Header } from "components/common";
-import {
-  createStyles,
-  CssBaseline,
-  makeStyles,
-  Theme,
-  Toolbar,
-} from "@material-ui/core";
+import { Container, CssBaseline, Theme, Toolbar } from "@material-ui/core";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -14,6 +9,7 @@ const useStyles = makeStyles((theme: Theme) =>
     content: {
       flexGrow: 1,
       padding: theme.spacing(3),
+      minHeight: "100vh",
     },
   })
 );
@@ -26,10 +22,10 @@ const Layout = (props) => {
 
       <Header />
       <Navigation />
-      <main className={classes.content}>
+      <div className={classes.content}>
         <Toolbar />
         {props.children}
-      </main>
+      </div>
     </div>
   );
 };

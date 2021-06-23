@@ -63,7 +63,7 @@ const Loads: React.FC<Props> = (props) => {
         </Grid>
       </Grid>
 
-      <DataTable data={data} />
+      <DataTable data={data.sort((a, b) => b.id - a.id)} />
     </Layout>
   );
 };
@@ -89,7 +89,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   } catch (error) {
     return {
       props: {
-        error,
+        error: error.message,
       },
     };
   }

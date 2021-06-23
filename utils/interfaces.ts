@@ -1,4 +1,3 @@
-import firebase from "firebase";
 
 export interface LoadProp {
   id: number;

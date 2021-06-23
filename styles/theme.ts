@@ -33,9 +33,9 @@ const theme = createMuiTheme({
   },
   typography: {},
   overrides: {
-    MuiCardContent: {
+    MuiDataGrid: {
       root: {
-        padding: 0,
+        border: "none",
       },
     },
   },

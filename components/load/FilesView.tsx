@@ -14,11 +14,9 @@ import {
   MenuItem,
   Select,
   FormLabel,
-  makeStyles,
-  Theme,
-  createStyles,
   Typography,
 } from "@material-ui/core";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { FileProp } from "utils/interfaces";
 import { useAuth } from "lib";
 import { storage } from "utils/firebaseClient";

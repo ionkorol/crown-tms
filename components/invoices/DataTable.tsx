@@ -10,16 +10,15 @@ import {
 } from "@material-ui/data-grid";
 import { InvoiceProp } from "utils/interfaces";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "react-bootstrap";
+import { Button, Paper } from "@material-ui/core";
 
 interface Props {
   data: InvoiceProp[];
   handleDelete: (invoiceId: string) => void;
-  handleEdit: (invoiceData: InvoiceProp) => void;
 }
 
 const DataTable: React.FC<Props> = (props) => {
-  const { data, handleDelete, handleEdit } = props;
+  const { data, handleDelete } = props;
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "#", width: 100 },
@@ -50,17 +49,9 @@ const DataTable: React.FC<Props> = (props) => {
             <FontAwesomeIcon icon="file-invoice" color="#fff" />
           </Button>
           <Button
-            onClick={() => handleEdit(params.value as InvoiceProp)}
-            variant="warning"
-            className="mr-1"
-          >
-            <FontAwesomeIcon icon="pencil-alt" color="#fff" />
-          </Button>
-          <Button
             onClick={() =>
               handleDelete(String((params.value as InvoiceProp).id))
             }
-            variant="danger"
           >
             <FontAwesomeIcon icon="trash-alt" color="#fff" />
           </Button>
@@ -80,17 +71,15 @@ const DataTable: React.FC<Props> = (props) => {
   );
 
   return (
-    <div style={{ display: "flex", height: "100%" }}>
-      <div style={{ flexGrow: 1 }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={10}
-          autoHeight
-          components={{ Toolbar: GridToolbar }}
-        />
-      </div>
-    </div>
+    <Paper style={{ flexGrow: 1 }}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSize={10}
+        autoHeight
+        components={{ Toolbar: GridToolbar }}
+      />
+    </Paper>
   );
 };
 

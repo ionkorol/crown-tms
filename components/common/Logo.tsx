@@ -1,12 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Typography,
-  Box,
-  Icon,
-  Theme,
-  createStyles,
-  makeStyles,
-} from "@material-ui/core";
+import { Typography, Box, Theme } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+
 import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>
