@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { Layout } from "components/common";
-import { Button, Table } from "react-bootstrap";
 import { GetServerSideProps } from "next";
 import { BrokerProp, InvoiceProp } from "utils/interfaces";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./Invoices.module.scss";
 import { DataTable } from "components/invoices";
+import { Button } from "@material-ui/core";
 
 interface Props {
   data: InvoiceProp[];
@@ -77,19 +76,10 @@ const Invoices: React.FC<Props> = (props) => {
   return (
     <Layout>
       <div className={styles.controls}>
-        <Button onClick={() => setShowAdd(true)} variant="outline-success">
-          + Add
-        </Button>
+        <Button onClick={() => setShowAdd(true)}>+ Add</Button>
       </div>
 
-      <DataTable
-        data={currentData}
-        handleDelete={handleDelete}
-        handleEdit={(invoiceData: InvoiceProp) => {
-          setEditInvoice(invoiceData);
-          setShowEdit(true);
-        }}
-      />
+      <DataTable data={currentData} handleDelete={handleDelete} />
     </Layout>
   );
 };
