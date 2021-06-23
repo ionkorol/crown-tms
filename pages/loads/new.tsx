@@ -7,6 +7,7 @@ import { auth } from "utils/firebaseAdmin";
 import { BrokerProp, JobProp, LoadProp } from "utils/interfaces";
 import { JobsView } from "components/loads/Form";
 import {
+  Card,
   Paper,
   Breadcrumbs,
   Button,
@@ -29,6 +30,10 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   IconButton,
+  CardHeader,
+  CardContent,
+  ListSubheader,
+  ButtonBaseProps,
 } from "@material-ui/core";
 import { useAuth } from "lib";
 
@@ -136,174 +141,197 @@ const NewLoad: React.FC<Props> = (props) => {
         </Grid>
         <Grid item>
           <Link href="/loads" passHref>
-            <Button variant="outlined" color="primary">
-              <Typography color="primary">
-                <ArrowBack /> Cancel
-              </Typography>
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<ArrowBack />}
+            >
+              Cancel
             </Button>
           </Link>
         </Grid>
       </Grid>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
-          <Grid item xs={6}>
-            <Paper className="p-5">
-              <Typography component="h2">Load Info</Typography>
+          <Grid item md={6}>
+            <Card>
+              <CardHeader title="Load Info" />
               <Divider className="my-3" />
-              <FormControl variant="outlined" fullWidth className="mb-3">
-                <InputLabel>Brokers</InputLabel>
-                <Select
-                  variant="outlined"
-                  name="broker"
-                  label="Brokers"
-                  value={broker}
-                  onChange={(e) => setBroker(e.target.value as string)}
-                  fullWidth
-                >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
+              <CardContent>
+                <Grid container spacing={3}>
+                  <Grid item md={9}>
+                    <FormControl variant="outlined" fullWidth>
+                      <InputLabel>Brokers</InputLabel>
+                      <Select
+                        variant="outlined"
+                        name="broker"
+                        label="Brokers"
+                        value={broker}
+                        onChange={(e) => setBroker(e.target.value as string)}
+                        fullWidth
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
 
-                  {brokers.map((broker) => (
-                    <MenuItem value={broker.id} key={broker.id}>
-                      {broker.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <TextField
-                variant="outlined"
-                label="Rate"
-                name="rate"
-                value={rate}
-                onChange={(e) => setRate(e.target.value)}
-                fullWidth
-                className="mb-3"
-              />
-              <List className="mb-3">
-                {!references.length && (
-                  <ListItem>
-                    <ListItemText
-                      primary={
-                        <Typography color="error">
-                          No load references
-                        </Typography>
+                        {brokers.map((broker) => (
+                          <MenuItem value={broker.id} key={broker.id}>
+                            {broker.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item md={3}>
+                    <TextField
+                      variant="outlined"
+                      label="Rate"
+                      name="rate"
+                      value={rate}
+                      onChange={(e) => setRate(e.target.value)}
+                      fullWidth
+                      className="mb-3"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <List className="mb-3">
+                      {!references.length && (
+                        <ListItem>
+                          <ListItemText
+                            primary={
+                              <Typography color="error">
+                                No load references
+                              </Typography>
+                            }
+                          />
+                        </ListItem>
+                      )}
+                      {references.map((ref, index) => (
+                        <ListItem divider key={index}>
+                          <ListItemText primary={`${ref.name}: ${ref.value}`} />
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              onClick={() => handleRemoveReference(ref.name)}
+                            >
+                              <Delete color="error" />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Grid>
+                  <Grid item md={5}>
+                    <TextField
+                      size="small"
+                      variant="outlined"
+                      label="Ref Name"
+                      value={reference.name}
+                      onChange={(e) =>
+                        setReference((prevState) => ({
+                          ...prevState,
+                          name: e.target.value,
+                        }))
                       }
                     />
-                  </ListItem>
-                )}
-                {references.map((ref, index) => (
-                  <ListItem divider key={index}>
-                    <ListItemText primary={`${ref.name}: ${ref.value}`} />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        onClick={() => handleRemoveReference(ref.name)}
-                      >
-                        <Delete color="error" />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))}
-              </List>
-              <Grid container spacing={3}>
-                <Grid item xs={5}>
-                  <TextField
-                    size="small"
-                    variant="outlined"
-                    label="Reference Name"
-                    value={reference.name}
-                    onChange={(e) =>
-                      setReference((prevState) => ({
-                        ...prevState,
-                        name: e.target.value,
-                      }))
-                    }
-                  />
+                  </Grid>
+                  <Grid item md={5}>
+                    <TextField
+                      size="small"
+                      variant="outlined"
+                      label="Ref Value"
+                      value={reference.value}
+                      onChange={(e) =>
+                        setReference((prevState) => ({
+                          ...prevState,
+                          value: e.target.value,
+                        }))
+                      }
+                    />
+                  </Grid>
+                  <Grid item md={2}>
+                    <Button
+                      color="primary"
+                      onClick={handleAddReference}
+                      startIcon={<Add />}
+                    >
+                      ADD
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item xs={5}>
-                  <TextField
-                    size="small"
-                    variant="outlined"
-                    label="Reference Value"
-                    value={reference.value}
-                    onChange={(e) =>
-                      setReference((prevState) => ({
-                        ...prevState,
-                        value: e.target.value,
-                      }))
-                    }
-                  />
-                </Grid>
-                <Grid item xs={2}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAddReference}
-                  >
-                    <Add /> ADD
-                  </Button>
-                </Grid>
-              </Grid>
-            </Paper>
+              </CardContent>
+            </Card>
           </Grid>
-          <Grid item xs={6}>
-            <Paper className="p-5">
-              <Grid container justify="space-between" alignItems="center">
-                <Grid item>
-                  <Typography component="h1">Jobs Info</Typography>
-                </Grid>
-                <Grid item>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <CardHeader
+                title="Jobs Info"
+                action={
                   <Button
-                    variant="contained"
+                    aria-label="settings"
                     color="primary"
                     onClick={() => setShowAddJob(true)}
+                    startIcon={<Add />}
                   >
-                    <Add /> Add Job
+                    Add
                   </Button>
-                </Grid>
-              </Grid>
-              <Divider className="my-3" />
-              <FormControlLabel
-                label="Is tonu?"
-                control={
-                  <Switch
-                    name="isTonu"
-                    color="primary"
-                    onChange={(e) => setIsTonu(!isTonu)}
-                  />
                 }
               />
-              <List subheader={<Typography>Job List</Typography>}>
-                {jobs
-                  .sort((a, b) => {
-                    if (a.type === "Pick" && b.type === "Drop") {
-                      return -1;
-                    } else if (a.type === "Drop" && b.type === "Pick") {
-                      return 1;
-                    } else {
-                      return 0;
-                    }
-                  })
-                  .map((job, index) => (
-                    <ListItem key={index} divider>
-                      <ListItemIcon>
-                        {job.type === "Pick" ? (
-                          <PickJobIcon />
-                        ) : (
-                          <DropJobIcon />
-                        )}
-                      </ListItemIcon>
-                      <ListItemText>
-                        {job.name}: {job.address.address1}, {job.address.city},{" "}
-                        {job.address.state} {job.address.zipCode}
-                      </ListItemText>
-                    </ListItem>
-                  ))}
-              </List>
-            </Paper>
+
+              <Divider />
+              <CardContent>
+                <Grid container>
+                  <Grid item xs={12}>
+                    <FormControlLabel
+                      label="Is tonu?"
+                      control={
+                        <Switch
+                          name="isTonu"
+                          color="primary"
+                          onChange={(e) => setIsTonu(!isTonu)}
+                        />
+                      }
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <List subheader={<ListSubheader>Job List</ListSubheader>}>
+                      {jobs
+                        .sort((a, b) => {
+                          if (a.type === "Pick" && b.type === "Drop") {
+                            return -1;
+                          } else if (a.type === "Drop" && b.type === "Pick") {
+                            return 1;
+                          } else {
+                            return 0;
+                          }
+                        })
+                        .map((job, index) => (
+                          <ListItem key={index} divider>
+                            <ListItemIcon>
+                              {job.type === "Pick" ? (
+                                <PickJobIcon />
+                              ) : (
+                                <DropJobIcon />
+                              )}
+                            </ListItemIcon>
+                            <ListItemText>
+                              {job.name}: {job.address.address1},{" "}
+                              {job.address.city}, {job.address.state}{" "}
+                              {job.address.zipCode}
+                            </ListItemText>
+                          </ListItem>
+                        ))}
+                    </List>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12}>
+            <Button variant="contained" color="primary" type="submit" fullWidth>
+              Submit
+            </Button>
           </Grid>
         </Grid>
-        <Button type="submit">Submit</Button>
       </form>
       <JobsView
         onSubmit={(values) => setJobs((prevState) => [...prevState, values])}

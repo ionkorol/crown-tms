@@ -33,6 +33,11 @@ const theme = createMuiTheme({
   },
   typography: {},
   overrides: {
+    MuiCardHeader: {
+      action: {
+        alignSelf: 'center'
+      }
+    },
     MuiDataGrid: {
       root: {
         border: "none",
