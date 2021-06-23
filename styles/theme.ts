@@ -1,6 +1,13 @@
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createMuiTheme, StyleRules } from "@material-ui/core/styles";
 import red from "@material-ui/core/colors/red";
 import { green } from "@material-ui/core/colors";
+import { CardHeaderClassKey, TableClassKey } from "@material-ui/core";
+
+declare module "@material-ui/core/styles/overrides" {
+  export interface ComponentNameToClassKey {
+    MuiDataGrid: TableClassKey;
+  }
+}
 
 // Create a theme instance.
 const theme = createMuiTheme({
@@ -35,8 +42,8 @@ const theme = createMuiTheme({
   overrides: {
     MuiCardHeader: {
       action: {
-        alignSelf: 'center'
-      }
+        alignSelf: "center",
+      },
     },
     MuiDataGrid: {
       root: {
