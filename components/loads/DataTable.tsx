@@ -24,6 +24,7 @@ import { Visibility } from "@material-ui/icons";
 import Link from "next/link";
 import { formatCurrency } from "lib";
 import { Search, Check } from "@material-ui/icons";
+import { CustomBadge } from "components/ui";
 interface Props {
   data: LoadProp[];
   // handleDelete: (invoiceId: string) => void;
@@ -43,6 +44,14 @@ const DataTable: React.FC<Props> = (props) => {
     { field: "id", headerName: "#", width: 100 },
     { field: "broker", headerName: "Broker", flex: 3, sortable: false },
     {
+      type: "date",
+      field: "date",
+      headerName: "Created on",
+      flex: 1,
+      valueFormatter: (params: GridValueFormatterParams) =>
+        new Date(params.value as number).toLocaleDateString(),
+    },
+    {
       type: "number",
       field: "amount",
       headerName: "Amount",
@@ -51,10 +60,19 @@ const DataTable: React.FC<Props> = (props) => {
         formatCurrency(params.value as number),
     },
     {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      renderCell: (params: GridCellParams) => (
+        <CustomBadge color="success">{params.value}</CustomBadge>
+      )
+    },
+    {
       field: "actions",
       headerName: "Actions",
       width: 100,
       align: "center",
+      filterable: false,
       renderCell: (params: GridCellParams) => (
         <Link href={`/loads/${params.value}`}>
           <IconButton>
@@ -71,7 +89,9 @@ const DataTable: React.FC<Props> = (props) => {
       ({
         id: invoice.id,
         broker: invoice.broker.dba,
+        date: invoice.createdAt,
         amount: invoice.rate,
+        status: invoice.status,
         actions: invoice.id,
       } as GridRowModel)
   );

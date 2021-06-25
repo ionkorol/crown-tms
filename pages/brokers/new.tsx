@@ -10,7 +10,7 @@ import {
   Paper,
   Box,
 } from "@material-ui/core";
-import { ArrowBack } from "@material-ui/icons";
+import { ArrowBack, ChevronRight } from "@material-ui/icons";
 import { Layout } from "components/common";
 import { getIn, useFormik } from "formik";
 import Link from "next/link";
@@ -35,6 +35,14 @@ const schema = yup.object().shape({
   accountingEmail: yup.string().required("Accounting email is required"),
   terms: yup.string().required("Terms are required"),
 });
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    content: {
+      marginTop: theme.spacing(5),
+    },
+  })
+);
 
 const NewBroker = () => {
   const classes = useStyles();
@@ -73,30 +81,28 @@ const NewBroker = () => {
   });
   return (
     <Layout>
-      <Grid container className={classes.controls}>
+      <Grid container justify="space-between" alignItems="center">
         <Grid item>
-          <h1>New Broker</h1>
-          <Breadcrumbs separator=">">
-            <Link href="/" passHref>
-              Dashboard
-            </Link>
-            <Link href="/loads" passHref>
-              Brokers
-            </Link>
+          <Typography variant="h2">New Broker</Typography>
+          <Breadcrumbs separator={<ChevronRight />}>
+            <Link href="/">Dashboard</Link>
+            <Link href="/loads">Brokers</Link>
             <Typography color="textPrimary">New Broker</Typography>
           </Breadcrumbs>
         </Grid>
         <Grid item>
-          <Link href="/brokers" passHref>
-            <Button variant="outlined" color="primary">
-              <Typography color="primary">
-                <ArrowBack /> Cancel
-              </Typography>
+          <Link href="/brokers">
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<ArrowBack />}
+            >
+              Cancel
             </Button>
           </Link>
         </Grid>
       </Grid>
-      <Paper>
+      <Paper className={classes.content}>
         <Box padding={3}>
           <form onSubmit={formik.handleSubmit}>
             <Grid container spacing={3}>
@@ -337,14 +343,3 @@ const NewBroker = () => {
 };
 
 export default NewBroker;
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    controls: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      padding: theme.spacing(2),
-    },
-  })
-);

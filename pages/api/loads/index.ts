@@ -37,7 +37,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           id: currentId,
           createdAt: Date.now(),
           notes: [],
-        });
+          status: "Complete",
+        } as LoadProp);
 
       res.status(200).json({ id: currentId });
     } catch (error) {

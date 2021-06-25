@@ -14,7 +14,13 @@ import {
   Divider,
 } from "@material-ui/core";
 import { createStyles, makeStyles, useTheme } from "@material-ui/core/styles";
-import { Business, Description, Work, People } from "@material-ui/icons";
+import {
+  Business,
+  Description,
+  Work,
+  People,
+  Dashboard,
+} from "@material-ui/icons";
 import Link from "next/link";
 import { NavItem } from "components/common/Navigation";
 import Logo from "../Logo";
@@ -75,6 +81,8 @@ const Navigation: React.FC<Props> = (props) => {
           component="nav"
           subheader={<ListSubheader>Managment</ListSubheader>}
         >
+          <NavItem text="Dasboard" icon={<Dashboard />} url="/" />
+          {/* Loads */}
           <NavItem text="Loads" icon={<Work />}>
             <Link href="/loads">
               <ListItem button>
@@ -87,6 +95,7 @@ const Navigation: React.FC<Props> = (props) => {
               </ListItem>
             </Link>
           </NavItem>
+          {/* Brokers */}
           <NavItem text="Brokers" icon={<Business />}>
             <Link href="/brokers">
               <ListItem button>
@@ -99,14 +108,18 @@ const Navigation: React.FC<Props> = (props) => {
               </ListItem>
             </Link>
           </NavItem>
+          {/* Invoices */}
           <NavItem text="Invoices" icon={<Description />}>
+            <Link href="/invoices">
+              <ListItem button>
+                <ListItemText className={classes.nestedNav}>List</ListItemText>
+              </ListItem>
+            </Link>
             <ListItem button>
-              <ListItemText className={classes.nestedNav}>List</ListItemText>
-            </ListItem>
-            <ListItem button>
-              <ListItemText className={classes.nestedNav}>New</ListItemText>
+              <ListItemText className={classes.nestedNav}>Reports</ListItemText>
             </ListItem>
           </NavItem>
+          {/* Users */}
           <NavItem text="Users" icon={<People />}>
             <ListItem button>
               <ListItemText className={classes.nestedNav}>List</ListItemText>

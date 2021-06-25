@@ -19,7 +19,7 @@ export interface LoadProp {
 export interface InvoiceProp {
   id: number;
   createdAt: number;
-  status: "Created" | "Sent" | "Paid";
+  status: "Generated" | "Pending" | "Paid";
   balance: number;
   additionalItems: {
     title: string;

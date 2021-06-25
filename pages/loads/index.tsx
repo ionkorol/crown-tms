@@ -1,13 +1,11 @@
 import React from "react";
 import { GetServerSideProps } from "next";
 import { Layout } from "components/common";
-import nookies from "nookies";
-import { auth } from "utils/firebaseAdmin";
 import { LoadProp } from "utils/interfaces";
 import { DataTable } from "components/loads";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import {
+  Box,
   Breadcrumbs,
   Button,
   createStyles,
@@ -16,14 +14,19 @@ import {
   Theme,
   Typography,
 } from "@material-ui/core";
+import { Add, ChevronRight } from "@material-ui/icons";
+import { isAuthenticated } from "lib/api/Users";
+import { getLoads } from "lib/api/Loads";
 
 interface Props {
   data: LoadProp[];
-  error?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    content: {
+      marginTop: theme.spacing(5),
+    },
     controls: {
       display: "flex",
       justifyContent: "space-between",
@@ -34,63 +37,43 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Loads: React.FC<Props> = (props) => {
-  const { data, error } = props;
+  const { data } = props;
   const classes = useStyles();
-  if (error) {
-    console.log(error);
-    return <div>Error</div>;
-  }
+
   return (
     <Layout>
-      <Grid container className={classes.controls}>
+      <Grid container justify="space-between" alignItems="center">
         <Grid item>
-          <h1>Loads</h1>
-          <Breadcrumbs>
-            <Link href="/" passHref>
-              Dashboard
-            </Link>
+          <Typography variant="h2">Loads</Typography>
+          <Breadcrumbs separator={<ChevronRight />}>
+            <Link href="/">Dashboard</Link>
             <Typography color="textPrimary">Loads</Typography>
           </Breadcrumbs>
         </Grid>
         <Grid item>
-          <Link href="/loads/new" passHref>
-            <Button variant="contained" color="primary" component="a">
-              <Typography color="textPrimary">
-                <FontAwesomeIcon icon="plus" className="mr-1" /> New Load
-              </Typography>
+          <Link href="/loads/new">
+            <Button variant="contained" color="primary" startIcon={<Add />}>
+              New Load
             </Button>
           </Link>
         </Grid>
       </Grid>
-
-      <DataTable data={data.sort((a, b) => b.id - a.id)} />
+      <Box className={classes.content}>
+        <DataTable data={data.sort((a, b) => b.id - a.id)} />
+      </Box>
     </Layout>
   );
 };
 
 export default Loads;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  try {
-    const { token } = nookies.get(ctx);
-    const { uid } = await auth().verifyIdToken(token);
-    const data = await (
-      await fetch(`${process.env.SERVER}/api/loads`, {
-        headers: {
-          user: uid,
-        },
-      })
-    ).json();
-    return {
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  await isAuthenticated(
+    ctx,
+    async (data) => ({
       props: {
-        data,
+        data: await getLoads(data.clientId),
       },
-    };
-  } catch (error) {
-    return {
-      props: {
-        error: error.message,
-      },
-    };
-  }
-};
+    }),
+    "/"
+  );

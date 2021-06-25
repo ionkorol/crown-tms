@@ -4,17 +4,19 @@ import {
   ListItemText,
   Collapse,
   List,
-  SvgIconTypeMap,
+  Button,
   makeStyles,
   Theme,
   createStyles,
 } from "@material-ui/core";
 import { ExpandLess, ExpandMore, StarBorder } from "@material-ui/icons";
+import Link from "next/link";
 import React, { useState } from "react";
 
 interface Props {
   text: string;
   icon: any;
+  url?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -24,9 +26,18 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const NavItem: React.FC<Props> = (props) => {
-  const { text, icon, children } = props;
+  const { text, icon, children, url } = props;
   const [open, setOpen] = useState(false);
-
+  if (!children) {
+    return (
+      <Link href={url}>
+        <ListItem button component="a">
+          <ListItemIcon>{icon}</ListItemIcon>
+          <ListItemText primary={text} />
+        </ListItem>
+      </Link>
+    );
+  }
   return (
     <>
       <ListItem button onClick={() => setOpen(!open)}>

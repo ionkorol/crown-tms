@@ -1,112 +1,83 @@
 import React, { useState } from "react";
 import { Layout } from "components/common";
 import { GetServerSideProps } from "next";
-import { BrokerProp, InvoiceProp } from "utils/interfaces";
-import styles from "./Invoices.module.scss";
-import { DataTable } from "components/invoices";
-import { Button } from "@material-ui/core";
+import { InvoiceProp } from "utils/interfaces";
+import { DataTable, Stats } from "components/invoices";
+import {
+  Box,
+  Breadcrumbs,
+  createStyles,
+  Grid,
+  makeStyles,
+  Theme,
+  Typography,
+} from "@material-ui/core";
+import { isAuthenticated } from "lib/api/Users";
+import { getInvoices } from "lib/api/Invoices";
+import { useAuth } from "lib";
+import Link from "next/link";
+import { ChevronRight } from "@material-ui/icons";
 
 interface Props {
   data: InvoiceProp[];
-  brokersData: BrokerProp[];
 }
 
-const Invoices: React.FC<Props> = (props) => {
-  const { data, brokersData } = props;
-  const [currentData, setCurrentData] = useState(data);
-  const [showAdd, setShowAdd] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [editInvoice, setEditInvoice] = useState(null);
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    content: {
+      marginTop: theme.spacing(5),
+    },
+  })
+);
 
-  console.log(editInvoice, showEdit);
+const Invoices: React.FC<Props> = (props) => {
+  const { data } = props;
+  const [currentData, setCurrentData] = useState(data);
+  const auth = useAuth();
+  const classes = useStyles();
 
   const handleRefresh = async () => {
-    const res = await fetch("/api/invoices");
+    const res = await fetch("/api/invoices", {
+      headers: {
+        user: auth.user.id,
+      },
+    });
     const data = await res.json();
     setCurrentData(data);
     console.log("Refresh");
   };
 
-  const handleDelete = async (invoiceId: string) => {
-    try {
-      await fetch(`/api/invoices/${invoiceId}`, {
-        method: "DELETE",
-      });
-      console.log("Deleted", invoiceId);
-      await handleRefresh();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleAdd = async (values: any) => {
-    try {
-      const res = await fetch("/api/invoices", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...values }),
-      });
-      const data = await res.json();
-      console.log("Added", data.id);
-      await handleRefresh();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleUpdate = async (values: any) => {
-    try {
-      const res = await fetch(`/api/invoices/${values.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...values }),
-      });
-      const data = await res.json();
-      console.log("Updated", data.id);
-      await handleRefresh();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <Layout>
-      <div className={styles.controls}>
-        <Button onClick={() => setShowAdd(true)}>+ Add</Button>
-      </div>
+      <Grid container alignItems="center" justify="space-between">
+        <Grid item>
+          <Typography variant="h2">Invoices</Typography>
+          <Breadcrumbs separator={<ChevronRight />}>
+            <Link href="/">Dashboard</Link>
+            <Typography color="textPrimary">Invoices</Typography>
+          </Breadcrumbs>
+        </Grid>
+        <Grid item>
+          <Stats data={currentData} />
+        </Grid>
+      </Grid>
 
-      <DataTable data={currentData} handleDelete={handleDelete} />
+      <Box className={classes.content}>
+        <DataTable data={currentData} />
+      </Box>
     </Layout>
   );
 };
 
 export default Invoices;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  try {
-    const data = await (
-      await fetch(`${process.env.SERVER}/api/invoices`)
-    ).json();
-
-    const brokersData = await (
-      await fetch(`${process.env.SERVER}/api/brokers/`)
-    ).json();
-    return {
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  await isAuthenticated(
+    ctx,
+    async (userData) => ({
       props: {
-        data,
-        brokersData,
+        data: await getInvoices(userData.clientId),
       },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-};
+    }),
+    "/"
+  );

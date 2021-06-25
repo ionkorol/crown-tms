@@ -11,10 +11,12 @@ import {
   Theme,
   Typography,
   Button,
+  Box,
 } from "@material-ui/core";
 import Link from "next/link";
-import { Add } from "@material-ui/icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Add, ChevronRight } from "@material-ui/icons";
+import { isAuthenticated } from "lib/api/Users";
+import { getBrokers } from "lib/api/Brokers";
 
 interface Props {
   data: BrokerProp[];
@@ -22,11 +24,8 @@ interface Props {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    controls: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      padding: theme.spacing(2),
+    content: {
+      marginTop: theme.spacing(5),
     },
   })
 );
@@ -95,46 +94,38 @@ const Brokers: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Grid container className={classes.controls}>
+      <Grid container justify="space-between" alignItems="center">
         <Grid item>
-          <h1>Brokers</h1>
-          <Breadcrumbs>
+          <Typography variant="h2">Brokers</Typography>
+          <Breadcrumbs separator={<ChevronRight />}>
             <Link href="/">Dashboard</Link>
             <Typography color="textPrimary">Brokers</Typography>
           </Breadcrumbs>
         </Grid>
         <Grid item>
-          <Link href="/brokers/new" passHref>
-            <Button component="a" variant="contained" color="primary">
-              <Add />
-              <Typography>New Broker</Typography>
+          <Link href="/brokers/new">
+            <Button variant="contained" color="primary" startIcon={<Add />}>
+              New Broker
             </Button>
           </Link>
         </Grid>
       </Grid>
-      <DataTable data={currentData} handleDelete={handleDelete} />
+      <Box className={classes.content}>
+        <DataTable data={currentData} handleDelete={handleDelete} />
+      </Box>
     </Layout>
   );
 };
 
 export default Brokers;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  try {
-    const data = await (
-      await fetch(`${process.env.SERVER}/api/brokers`)
-    ).json();
-    return {
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  await isAuthenticated(
+    ctx,
+    async (userData) => ({
       props: {
-        data,
+        data: await getBrokers(),
       },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-};
+    }),
+    "/"
+  );

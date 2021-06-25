@@ -6,23 +6,72 @@ import {
   GridRowModel,
   GridRowsProp,
   GridToolbar,
+  GridToolbarContainer,
   GridValueFormatterParams,
 } from "@material-ui/data-grid";
-import { InvoiceProp } from "utils/interfaces";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Paper } from "@material-ui/core";
+import { BrokerProp, InvoiceProp } from "utils/interfaces";
+import {
+  Chip,
+  FormControl,
+  Grid,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
+} from "@material-ui/core";
+import { Check, Search, Visibility } from "@material-ui/icons";
+import { Box } from "@material-ui/core";
+import { CustomBadge } from "components/ui";
 
 interface Props {
   data: InvoiceProp[];
-  handleDelete: (invoiceId: string) => void;
 }
 
 const DataTable: React.FC<Props> = (props) => {
-  const { data, handleDelete } = props;
+  const { data } = props;
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "#", width: 100 },
-    { field: "broker", headerName: "Broker", flex: 3 },
+    { field: "id", headerName: "#", width: 90 },
+    {
+      field: "broker",
+      headerName: "Broker",
+      flex: 2,
+      // renderCell: (params: GridCellParams) => (
+      //   <Box>
+      //     <Typography>{(params.value as BrokerProp).dba}</Typography>
+      //     <Typography variant="subtitle2" color="textSecondary">
+      //       {(params.value as BrokerProp).billingEmail}
+      //     </Typography>
+      //   </Box>
+      // ),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      renderCell: (params: GridCellParams) => (
+        <CustomBadge
+          color={
+            params.value === "Generate"
+              ? "info"
+              : params.value === "Pending"
+              ? "warning"
+              : "success"
+          }
+        >
+          {params.value}
+        </CustomBadge>
+      ),
+    },
+    {
+      field: "date",
+      headerName: "Date",
+      flex: 1,
+    },
     {
       type: "number",
       field: "amount",
@@ -37,25 +86,12 @@ const DataTable: React.FC<Props> = (props) => {
     {
       field: "actions",
       headerName: "Actions",
-      flex: 1,
+      width: 100,
       align: "center",
       renderCell: (params: GridCellParams) => (
-        <div>
-          <Button
-            href={`/invoices/${params.id}`}
-            className="mr-1"
-            target="_blank"
-          >
-            <FontAwesomeIcon icon="file-invoice" color="#fff" />
-          </Button>
-          <Button
-            onClick={() =>
-              handleDelete(String((params.value as InvoiceProp).id))
-            }
-          >
-            <FontAwesomeIcon icon="trash-alt" color="#fff" />
-          </Button>
-        </div>
+        <IconButton href={`/invoices/${params.id}`}>
+          <Visibility />
+        </IconButton>
       ),
     },
   ];
@@ -65,6 +101,8 @@ const DataTable: React.FC<Props> = (props) => {
       ({
         id: invoice.id,
         broker: invoice.broker.dba,
+        status: invoice.status,
+        date: new Date(invoice.createdAt).toLocaleDateString(),
         amount: invoice.load.rate,
         actions: invoice,
       } as GridRowModel)
@@ -74,13 +112,55 @@ const DataTable: React.FC<Props> = (props) => {
     <Paper style={{ flexGrow: 1 }}>
       <DataGrid
         rows={rows}
+        rowHeight={75}
         columns={columns}
         pageSize={10}
         autoHeight
-        components={{ Toolbar: GridToolbar }}
+        components={{ Toolbar: CustomToolbar }}
       />
     </Paper>
   );
 };
 
 export default DataTable;
+
+const CustomToolbar = () => {
+  return (
+    <GridToolbarContainer>
+      <Grid container spacing={3} style={{ padding: 20 }}>
+        <Grid item xs={3}>
+          <TextField
+            variant="outlined"
+            placeholder="Search for Invoice Number"
+            fullWidth
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <FormControl variant="outlined" size="small" fullWidth>
+            <InputLabel id="invoice-status-select-label">
+              Invoice Status
+            </InputLabel>
+            <Select
+              variant="outlined"
+              id="invoice-status-select"
+              labelId="invoice-status-select-label"
+              label="Invoice Status"
+              fullWidth
+            >
+              <MenuItem>Generated</MenuItem>
+              <MenuItem>Pending</MenuItem>
+              <MenuItem>Paid</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
+    </GridToolbarContainer>
+  );
+};

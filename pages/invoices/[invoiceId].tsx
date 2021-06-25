@@ -1,13 +1,11 @@
 import {
   Grid,
   Card,
-  Paper,
   Typography,
   Table,
   TableBody,
   TableRow,
   TableCell,
-  TableHead,
   List,
   ListItem,
   ListItemIcon,
@@ -20,18 +18,19 @@ import {
   createStyles,
   CardContent,
   CardActions,
-  CardHeader,
 } from "@material-ui/core";
 import { Layout } from "components/common";
 import Link from "next/link";
 import { DropJobIcon, PickJobIcon } from "components/ui/Icons";
-import React from "react";
-import { InvoiceProp, LoadProp } from "utils/interfaces";
+import React, { useState } from "react";
+import { InvoiceProp } from "utils/interfaces";
 import { GetServerSideProps } from "next";
-import { auth } from "utils/firebaseAdmin";
-import nookies from "nookies";
 import { formatAddress, formatCurrency } from "lib";
 import { generateClassicInvoice } from "lib/invoice";
+import { createInvoice, getInvoice } from "lib/api/Invoices";
+import { isAuthenticated } from "lib/api/Users";
+import { StatusBadge, StatusChange } from "components/invoices";
+import { ChevronRight } from "@material-ui/icons";
 
 interface Props {
   data: InvoiceProp;
@@ -39,17 +38,18 @@ interface Props {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    main: {
-      marginTop: theme.spacing(3),
+    content: {
+      marginTop: theme.spacing(5),
     },
   })
 );
 
 const Invoice: React.FC<Props> = (props) => {
   const { data } = props;
-  const classes = useStyles();
 
   const { broker, load } = data;
+  const classes = useStyles();
+  const [showChangeStatus, setShowChangeStatus] = useState(false);
 
   const picks = load.jobs.filter((job) => job.type === "Pick");
   const drops = load.jobs.filter((job) => job.type === "Drop");
@@ -63,72 +63,30 @@ const Invoice: React.FC<Props> = (props) => {
     return total;
   };
 
-  if (!data) {
-    return (
-      <Layout>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item>
-            <h1>Invoice# 1231 Details</h1>
-            <Breadcrumbs>
-              <Link href="/" passHref>
-                Dashboard
-              </Link>
-              <Link href="/loads" passHref>
-                Loads
-              </Link>
-              <Typography color="textPrimary">Invoice# 123</Typography>
-            </Breadcrumbs>
-          </Grid>
-          <Grid item>
-            <Grid container spacing={3}>
-              <Grid item>
-                <Button variant="outlined" color="primary">
-                  Edit Invoice
-                </Button>
-              </Grid>
-              <Grid item>
-                <Link href={`/loads/${data.id}`}>
-                  <Button variant="contained" color="primary">
-                    View Load
-                  </Button>
-                </Link>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Paper>
-          <Typography variant="h2" color="error">
-            Invoice Doesn't Exitst
-          </Typography>
-        </Paper>
-      </Layout>
-    );
-  }
-
   return (
     <Layout>
       <Grid container justify="space-between" alignItems="center">
         <Grid item>
-          <h1>Invoice# 1231 Details</h1>
-          <Breadcrumbs>
-            <Link href="/" passHref>
-              Dashboard
-            </Link>
-            <Link href="/loads" passHref>
-              Loads
-            </Link>
-            <Typography color="textPrimary">Invoice# 123</Typography>
+          <Typography variant="h2">Invoice Details</Typography>
+          <Breadcrumbs separator={<ChevronRight />}>
+            <Link href="/">Dashboard</Link>
+            <Link href="/invoices">Invoices</Link>
+            <Typography color="textPrimary">Invoice# {data.id}</Typography>
           </Breadcrumbs>
         </Grid>
         <Grid item>
           <Grid container spacing={3}>
             <Grid item>
-              <Button variant="outlined" color="primary">
-                Edit Invoice
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setShowChangeStatus(true)}
+              >
+                Change Status
               </Button>
             </Grid>
             <Grid item>
-              <Link href={`/loads/123`}>
+              <Link href={`/loads/${data.id}`}>
                 <Button variant="contained" color="primary">
                   View Load
                 </Button>
@@ -137,7 +95,7 @@ const Invoice: React.FC<Props> = (props) => {
           </Grid>
         </Grid>
       </Grid>
-      <Card className={classes.main}>
+      <Card className={classes.content}>
         <CardContent>
           <Box padding={3}>
             <Grid container spacing={3}>
@@ -153,18 +111,9 @@ const Invoice: React.FC<Props> = (props) => {
                 <br />
                 <Typography>JXbilling@gmail.com</Typography>
               </Grid>
-              <Grid item md={6}>
-                <Typography variant="h3">Invoice# 3333</Typography>
-                <Typography
-                  component="span"
-                  style={{
-                    backgroundColor: "red",
-                    padding: "5px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  UNPAID
-                </Typography>
+              <Grid item md={6} direction="row">
+                <Typography variant="h3">Invoice# {data.id}</Typography>
+                <StatusBadge data={data.status} />
               </Grid>
               <Grid item md={6}>
                 <Typography>
@@ -294,49 +243,36 @@ const Invoice: React.FC<Props> = (props) => {
           </Grid>
         </CardActions>
       </Card>
+      <StatusChange
+        show={showChangeStatus}
+        onClose={() => setShowChangeStatus(false)}
+        data={data}
+      />
     </Layout>
   );
 };
 
 export default Invoice;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { loadId } = ctx.query;
-
-  try {
-    const { token } = nookies.get(ctx);
-    const { uid } = await auth().verifyIdToken(token);
-    let data = null;
-    data = await (
-      await fetch(`${process.env.SERVER}/api/invoices/${loadId}`, {
-        headers: {
-          user: uid,
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  await isAuthenticated(
+    ctx,
+    async (userData) => {
+      let data = await getInvoice(
+        userData.clientId,
+        ctx.query.invoiceId as string
+      );
+      if (!data) {
+        data = await createInvoice(
+          userData.clientId,
+          ctx.query.invoiceId as string
+        );
+      }
+      return {
+        props: {
+          data,
         },
-      })
-    ).json();
-
-    if (!data) {
-      data = await (
-        await fetch(`${process.env.SERVER}/api/invoices/${loadId}`, {
-          method: "POST",
-          headers: {
-            user: uid,
-          },
-        })
-      ).json();
-    }
-
-    return {
-      props: {
-        data,
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        destination: "/loads",
-        permanent: false,
-      },
-    };
-  }
-};
+      };
+    },
+    "/"
+  );
