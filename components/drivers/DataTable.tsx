@@ -4,9 +4,6 @@ import {
   GridCellParams,
   GridColDef,
   GridRowModel,
-  GridRowsProp,
-  GridToolbar,
-  GridPanel,
   GridValueFormatterParams,
   GridToolbarContainer,
 } from "@material-ui/data-grid";
@@ -20,6 +17,8 @@ import {
 import { Visibility } from "@material-ui/icons";
 import Link from "next/link";
 import { Search, Check } from "@material-ui/icons";
+import { formatPhone } from "lib";
+
 interface Props {
   data: DriverProp[];
 }
@@ -38,18 +37,23 @@ const DataTable: React.FC<Props> = (props) => {
         new Date(params.value as number).toLocaleDateString(),
     },
     {
-      field: "from",
-      headerName: "From",
-      flex: 2,
+      field: "phone",
+      headerName: "Phone",
+      flex: 1,
+      valueFormatter: (params: GridValueFormatterParams) =>
+        formatPhone(params.value as any),
     },
     {
-      field: "id",
-      headerName: "#",
-      flex: 2,
-      sortable: false,
-      filterable: false,
-      disableColumnMenu: true,
+      field: "email",
+      headerName: "Email",
+      flex: 1,
     },
+    {
+      field: "from",
+      headerName: "From",
+      flex: 1,
+    },
+
     {
       field: "action",
       headerName: " ",
@@ -57,6 +61,7 @@ const DataTable: React.FC<Props> = (props) => {
       filterable: false,
       sortable: false,
       disableColumnMenu: true,
+      // eslint-disable-next-line react/display-name
       renderCell: (params: GridCellParams) => (
         <Link href={`/drivers/${params.value}`}>
           <IconButton>
@@ -73,7 +78,9 @@ const DataTable: React.FC<Props> = (props) => {
         id: driver.id,
         fullName: `${driver.firstName} ${driver.lastName}`,
         date: driver.createdAt,
-        from: `${driver.address.city} ${driver.address.state}`,
+        phone: driver.phone,
+        email: driver.email,
+        from: `${driver.address.city}, ${driver.address.state}`,
         action: driver.id,
       } as GridRowModel)
   );

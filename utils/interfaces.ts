@@ -86,8 +86,11 @@ export interface DriverProp {
   firstName: string;
   lastName: string;
   address: AddressProp;
+  phone: string;
+  email: string;
   createdAt: number;
 }
+
 export interface VehicleProp {
   id: string;
   createdAt: number;

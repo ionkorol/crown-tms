@@ -27,6 +27,8 @@ const schema = yup.object().shape({
     state: yup.string().required("Required"),
     zipCode: yup.string().required("Required"),
   }),
+  phone: yup.string().required("Required"),
+  email: yup.string().email("Enter Valid Email").required("Required"),
 });
 
 const NewDriver = () => {
@@ -44,6 +46,8 @@ const NewDriver = () => {
         state: "",
         zipCode: "",
       },
+      phone: "",
+      email: "",
     },
     onSubmit: async () => {
       try {
@@ -207,6 +211,32 @@ const NewDriver = () => {
                       getIn(formik.touched, "address.zipCode") &&
                       getIn(formik.errors, "address.zipCode")
                     }
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    id="phone"
+                    name="phone"
+                    label="Phone"
+                    value={formik.values.phone}
+                    onChange={formik.handleChange}
+                    error={formik.touched.phone && Boolean(formik.errors.phone)}
+                    helperText={formik.touched.phone && formik.errors.phone}
+                  />
+                </Grid>
+                <Grid item md={6}>
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    id="email"
+                    name="email"
+                    label="Email"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
+                    helperText={formik.touched.email && formik.errors.email}
                   />
                 </Grid>
                 <Grid item>
