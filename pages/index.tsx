@@ -1,14 +1,13 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Head from "next/head";
-import Image from "next/image";
+import { Typography } from "@material-ui/core";
+import React from "react";
 import { Layout, Logo } from "../components/common";
 
 export default function Home() {
   return (
     <Layout>
-      <h1>
+      <Typography variant="h2">
         Welcome to <Logo />
-      </h1>
+      </Typography>
     </Layout>
   );
 }
