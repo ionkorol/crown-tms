@@ -1,7 +1,5 @@
-
 export interface LoadProp {
   id: number;
-  broker: BrokerProp;
   references: {
     name: string;
     value: string;
@@ -11,9 +9,11 @@ export interface LoadProp {
   rate: number;
   createdAt: number;
   notes: string[];
-  invoice?: InvoiceProp;
   status: "In Progress" | "Complete";
+  invoice?: InvoiceProp;
+  broker: BrokerProp;
   driver?: DriverProp;
+  vehicle?: VehicleProp;
 }
 
 export interface InvoiceProp {
@@ -83,6 +83,17 @@ export interface FileProp {
 
 export interface DriverProp {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  address: AddressProp;
+  createdAt: number;
 }
-export interface TruckProp {}
+export interface VehicleProp {
+  id: string;
+  createdAt: number;
+  vin: string;
+  year: number;
+  make: string;
+  model: string;
+  type: string;
+}

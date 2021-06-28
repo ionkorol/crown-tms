@@ -1,10 +1,14 @@
 import { Layout } from "components/common";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import nookies from "nookies";
-import { auth } from "utils/firebaseAdmin";
-import { BrokerProp, JobProp, LoadProp } from "utils/interfaces";
+import React, { useState } from "react";
+import {
+  BrokerProp,
+  DriverProp,
+  JobProp,
+  LoadProp,
+  VehicleProp,
+} from "utils/interfaces";
 import { JobsView } from "components/loads/Form";
 import {
   Card,
@@ -29,6 +33,10 @@ import {
   CardContent,
   ListSubheader,
   Box,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@material-ui/core";
 import { useAuth } from "lib";
 
@@ -37,9 +45,13 @@ import { DropJobIcon, PickJobIcon } from "components/ui/Icons";
 import { Autocomplete } from "@material-ui/lab";
 import { isAuthenticated } from "lib/api/Users";
 import { getBrokers } from "lib/api/Brokers";
+import { getDrivers } from "lib/api/Drivers";
+import { getVehicles } from "lib/api/Vehicles";
 
 interface Props {
-  data: BrokerProp[];
+  brokers: BrokerProp[];
+  drivers: DriverProp[];
+  vehicles: VehicleProp[];
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -51,9 +63,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const NewLoad: React.FC<Props> = (props) => {
-  const { data } = props;
+  const { brokers, drivers, vehicles } = props;
   const [showAddJob, setShowAddJob] = useState(false);
-  const [broker, setBroker] = useState<BrokerProp | null>(data[0]);
+  const [broker, setBroker] = useState<BrokerProp | null>(brokers[0]);
   const [references, setReferences] = useState<
     { name: string; value: string }[]
   >([]);
@@ -61,6 +73,9 @@ const NewLoad: React.FC<Props> = (props) => {
   const [jobs, setJobs] = useState<JobProp[]>([]);
   const [rate, setRate] = useState("");
   const [reference, setReference] = useState({ name: "", value: "" });
+
+  const [driver, setDriver] = useState("");
+  const [vehicle, setVehicle] = useState("");
 
   const classes = useStyles();
 
@@ -97,16 +112,18 @@ const NewLoad: React.FC<Props> = (props) => {
             isTonu,
             jobs,
             rate: Number(rate),
+            driver,
+            vehicle,
           }),
         })
       ).json();
       if (data.id) {
-        console.log(data.id);
+        alert(data.id);
       } else {
-        console.log("Error");
+        alert("Error");
       }
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   };
 
@@ -136,7 +153,7 @@ const NewLoad: React.FC<Props> = (props) => {
       <Box className={classes.content}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
-            <Grid item md={6}>
+            <Grid item md={12}>
               <Card>
                 <CardHeader title="Load Info" />
                 <Divider className="my-3" />
@@ -145,7 +162,7 @@ const NewLoad: React.FC<Props> = (props) => {
                     <Grid item md={9}>
                       <Autocomplete
                         value={broker}
-                        options={data}
+                        options={brokers}
                         getOptionLabel={(option) =>
                           `${option.name}(${option.dba})`
                         }
@@ -254,7 +271,7 @@ const NewLoad: React.FC<Props> = (props) => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={12}>
               <Card>
                 <CardHeader
                   title="Jobs Info"
@@ -319,6 +336,54 @@ const NewLoad: React.FC<Props> = (props) => {
                 </CardContent>
               </Card>
             </Grid>
+            <Grid item md={12}>
+              <Card>
+                <CardHeader title="Assignemnts" />
+                <CardContent>
+                  <Grid container spacing={3}>
+                    <Grid item md={6}>
+                      <FormControl variant="outlined" fullWidth>
+                        <InputLabel>Driver</InputLabel>
+                        <Select
+                          label="Driver"
+                          value={driver}
+                          onChange={(e) => setDriver(e.target.value as any)}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {drivers.map((driver) => (
+                            <MenuItem key={driver.id} value={driver.id}>
+                              {driver.firstName} {driver.lastName}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item md={6}>
+                      <FormControl variant="outlined" fullWidth>
+                        <InputLabel>Vehicle</InputLabel>
+                        <Select
+                          label="Vehicle"
+                          value={vehicle}
+                          onChange={(e) => setVehicle(e.target.value as any)}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {vehicles.map((vehicle) => (
+                            <MenuItem key={vehicle.id} value={vehicle.id}>
+                              {vehicle.id}. {vehicle.year} {vehicle.make}{" "}
+                              {vehicle.model}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
             <Grid item xs={12}>
               <Button
                 variant="contained"
@@ -346,6 +411,12 @@ export default NewLoad;
 export const getServerSideProps: GetServerSideProps = async (ctx) =>
   await isAuthenticated(
     ctx,
-    async (data) => ({ props: { data: await getBrokers() } }),
+    async (data) => ({
+      props: {
+        brokers: await getBrokers(),
+        drivers: await getDrivers(data.clientId),
+        vehicles: await getVehicles(data.clientId),
+      },
+    }),
     "/"
   );

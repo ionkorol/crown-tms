@@ -2,19 +2,21 @@
 
 ## Driver
 
-[ ] Table
-[ ] Form
+[x] Table
+[x] Form
 
-## Trucks
+## Vehicles
 
-[ ] Table
-[ ] Form
+[x] Table
+[x] Form
 
 ## Load
 
 [x] Invoice tied to load
 [ ] Status Ribon - separate (maybe)
-[ ] Assign Driver
+[x] Assign Driver and Vehicle
+[ ] Edit functions
+[ ] Add Notes
 
 ## Files
 

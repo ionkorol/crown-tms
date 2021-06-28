@@ -1,5 +1,7 @@
 import { firestore } from "utils/firebaseAdmin";
 import { LoadProp } from "utils/interfaces";
+import { getDriver } from "../Drivers";
+import { getVehicle } from "../Vehicles";
 
 const getLoad = async (clientId: string, loadId: string) => {
   const clientRef = firestore().collection("clients").doc(clientId);
@@ -11,9 +13,12 @@ const getLoad = async (clientId: string, loadId: string) => {
     .collection("brokers")
     .doc(loadData.broker)
     .get();
-  const broekrData = brokerSnap.data();
+  const brokerData = brokerSnap.data();
 
-  return { ...loadData, broker: broekrData } as LoadProp;
+  const driver = await getDriver(clientId, loadData.driver);
+  const vehicle = await getVehicle(clientId, loadData.vehicle);
+
+  return { ...loadData, broker: brokerData, driver, vehicle } as LoadProp;
 };
 
 export default getLoad;

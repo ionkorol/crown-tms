@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import { LoadProp } from "utils/interfaces";
-import nookies from "nookies";
-import { auth } from "utils/firebaseAdmin";
 import { Layout } from "components/common";
 import {
   Breadcrumbs,
@@ -96,30 +94,37 @@ const Load: React.FC<Props> = (props) => {
             <Card>
               <CardHeader title="Load Info" />
               <Divider />
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>Number</TableCell>
-                      <TableCell>
-                        <strong>{data.id}</strong>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>References</TableCell>
-                      <TableCell>
-                        {data.references.map((ref) => `${ref.value} | `)}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Is TONU</TableCell>
-                      <TableCell>{data.isTonu ? "Yes" : "No"}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Rate</TableCell>
-                      <TableCell>{formatCurrency(data.rate)}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Number</TableCell>
+                    <TableCell>
+                      <strong>{data.id}</strong>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>References</TableCell>
+                    <TableCell>
+                      {data.references.map((ref) => `${ref.value} | `)}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Is TONU</TableCell>
+                    <TableCell>{data.isTonu ? "Yes" : "No"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Rate</TableCell>
+                    <TableCell>{formatCurrency(data.rate)}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Driver / Vehicle</TableCell>
+                    <TableCell>
+                      {data.driver.firstName} {data.driver.lastName} /{" "}
+                      {data.vehicle.id}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
               <CardActions>
                 <Button color="primary">Edit</Button>
               </CardActions>
@@ -129,35 +134,40 @@ const Load: React.FC<Props> = (props) => {
             <Card>
               <CardHeader title="Broker Info" />
               <Divider />
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>
-                        <strong>{data.broker.dba}</strong>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>MC / USDOT</TableCell>
-                      <TableCell>
-                        {data.broker.mc} / {data.broker.usdot}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Phone / Fax</TableCell>
-                      <TableCell>
-                        {data.broker.phone} / {data.broker.fax}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Emails</TableCell>
-                      <TableCell>
-                        {data.broker.billingEmail} /{" "}
-                        {data.broker.accountingEmail}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>
+                      <strong>{data.broker.name}</strong>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>DBA</TableCell>
+                    <TableCell>
+                      <strong>{data.broker.dba}</strong>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>MC / USDOT</TableCell>
+                    <TableCell>
+                      {data.broker.mc} / {data.broker.usdot}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Phone / Fax</TableCell>
+                    <TableCell>
+                      {data.broker.phone} / {data.broker.fax}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Emails</TableCell>
+                    <TableCell>
+                      {data.broker.billingEmail} / {data.broker.accountingEmail}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
               <CardActions>
                 <Button color="primary">View</Button>
               </CardActions>
@@ -167,23 +177,19 @@ const Load: React.FC<Props> = (props) => {
             <Card>
               <CardHeader title="Picks / Drops Info" />
               <Divider />
-                <List>
-                  {data.jobs.map((job, index) => (
-                    <ListItem divider key={index}>
-                      <ListItemIcon>
-                        {job.type === "Pick" ? (
-                          <PickJobIcon />
-                        ) : (
-                          <DropJobIcon />
-                        )}
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={job.name}
-                        secondary={formatAddress(job.address)}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
+              <List>
+                {data.jobs.map((job, index) => (
+                  <ListItem divider key={index}>
+                    <ListItemIcon>
+                      {job.type === "Pick" ? <PickJobIcon /> : <DropJobIcon />}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={job.name}
+                      secondary={formatAddress(job.address)}
+                    />
+                  </ListItem>
+                ))}
+              </List>
               <CardActions>
                 <Button color="primary">Edit</Button>
               </CardActions>
