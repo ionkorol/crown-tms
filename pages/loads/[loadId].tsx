@@ -97,27 +97,37 @@ const Load: React.FC<Props> = (props) => {
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell>Number</TableCell>
                     <TableCell>
-                      <strong>{data.id}</strong>
+                      <strong>Number</strong>
+                    </TableCell>
+                    <TableCell>{data.id}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <strong>References</strong>
+                    </TableCell>
+                    <TableCell>
+                      {data.references.map(
+                        (ref) => `${ref.name}: ${ref.value}`
+                      )}
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>References</TableCell>
                     <TableCell>
-                      {data.references.map((ref) => `${ref.value} | `)}
+                      <strong>TONU</strong>
                     </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>Is TONU</TableCell>
                     <TableCell>{data.isTonu ? "Yes" : "No"}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>Rate</TableCell>
+                    <TableCell>
+                      <strong>Rate</strong>
+                    </TableCell>
                     <TableCell>{formatCurrency(data.rate)}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>Driver / Vehicle</TableCell>
+                    <TableCell>
+                      <strong>Driver / Vehicle</strong>
+                    </TableCell>
                     <TableCell>
                       {data.driver.firstName} {data.driver.lastName} /{" "}
                       {data.vehicle.id}
@@ -137,31 +147,37 @@ const Load: React.FC<Props> = (props) => {
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell>Name</TableCell>
                     <TableCell>
-                      <strong>{data.broker.name}</strong>
+                      <strong>Name</strong>
                     </TableCell>
+                    <TableCell>{data.broker.name}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>DBA</TableCell>
                     <TableCell>
-                      <strong>{data.broker.dba}</strong>
+                      <strong>DBA</strong>
                     </TableCell>
+                    <TableCell>{data.broker.dba}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>MC / USDOT</TableCell>
+                    <TableCell>
+                      <strong>MC / USDOT</strong>
+                    </TableCell>
                     <TableCell>
                       {data.broker.mc} / {data.broker.usdot}
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>Phone / Fax</TableCell>
+                    <TableCell>
+                      <strong>Phone / Fax</strong>
+                    </TableCell>
                     <TableCell>
                       {data.broker.phone} / {data.broker.fax}
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>Emails</TableCell>
+                    <TableCell>
+                      <strong>Emails</strong>
+                    </TableCell>
                     <TableCell>
                       {data.broker.billingEmail} / {data.broker.accountingEmail}
                     </TableCell>
