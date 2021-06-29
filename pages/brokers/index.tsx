@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Layout } from "components/common";
 import { DataTable } from "components/brokers";
 import { GetServerSideProps } from "next";
@@ -33,9 +33,6 @@ const useStyles = makeStyles((theme: Theme) =>
 const Brokers: React.FC<Props> = (props) => {
   const { data } = props;
   const [currentData, setCurrentData] = useState(data);
-  const [showAdd, setShowAdd] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [editBroker, setEditBroker] = useState(null);
 
   const classes = useStyles();
 
@@ -45,40 +42,6 @@ const Brokers: React.FC<Props> = (props) => {
         method: "DELETE",
       });
       alert(`Deleted ${brokerId}`);
-      await handleRefresh();
-    } catch (error) {
-      alert(error);
-    }
-  };
-
-  const handleAdd = async (values: any) => {
-    try {
-      const res = await fetch("/api/brokers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...values }),
-      });
-      const data = await res.json();
-      alert(`Added ${data.id}`);
-      await handleRefresh();
-    } catch (error) {
-      alert(error);
-    }
-  };
-
-  const handleUpdate = async (values: any) => {
-    try {
-      const res = await fetch(`/api/brokers/${values.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...values }),
-      });
-      const data = await res.json();
-      alert(`Updated ${data.id}`);
       await handleRefresh();
     } catch (error) {
       alert(error);
@@ -122,7 +85,7 @@ export default Brokers;
 export const getServerSideProps: GetServerSideProps = async (ctx) =>
   await isAuthenticated(
     ctx,
-    async (userData) => ({
+    async () => ({
       props: {
         data: await getBrokers(),
       },

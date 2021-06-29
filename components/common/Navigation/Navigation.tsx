@@ -21,6 +21,7 @@ import {
   People,
   Dashboard,
   LocalShipping,
+  Assessment,
 } from "@material-ui/icons";
 import Link from "next/link";
 import { NavItem } from "components/common/Navigation";
@@ -143,6 +144,19 @@ const Navigation: React.FC<Props> = (props) => {
             <Link href="/vehicles/new">
               <ListItem button>
                 <ListItemText className={classes.nestedNav}>New</ListItemText>
+              </ListItem>
+            </Link>
+          </NavItem>
+          {/* Accounting */}
+          <NavItem text="Accounting" icon={<Assessment />}>
+            <Link href="/accounting/reports">
+              <ListItem button>
+                <ListItemText className={classes.nestedNav}>Reports</ListItemText>
+              </ListItem>
+            </Link>
+            <Link href="/accounting/driver-pay">
+              <ListItem button>
+                <ListItemText className={classes.nestedNav}>Driver Pay</ListItemText>
               </ListItem>
             </Link>
           </NavItem>
