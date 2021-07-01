@@ -53,7 +53,7 @@ const Load: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Grid container justify="space-between" alignItems="center">
+      <Grid container spacing={3} justify="space-between" alignItems="center">
         <Grid item>
           <Typography variant="h2">Load# {data.id}</Typography>
           <Breadcrumbs separator={<ChevronRight />}>
@@ -90,7 +90,7 @@ const Load: React.FC<Props> = (props) => {
       </Grid>
       <Box className={classes.content}>
         <Grid container spacing={3}>
-          <Grid item xs={6}>
+          <Grid item xs={12} sm={6}>
             <Card>
               <CardHeader title="Load Info" />
               <Divider />
@@ -140,7 +140,7 @@ const Load: React.FC<Props> = (props) => {
               </CardActions>
             </Card>
           </Grid>
-          <Grid item lg={6}>
+          <Grid item xs={12} sm={6}>
             <Card>
               <CardHeader title="Broker Info" />
               <Divider />
@@ -189,7 +189,7 @@ const Load: React.FC<Props> = (props) => {
               </CardActions>
             </Card>
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6}>
             <Card>
               <CardHeader title="Picks / Drops Info" />
               <Divider />
@@ -211,7 +211,7 @@ const Load: React.FC<Props> = (props) => {
               </CardActions>
             </Card>
           </Grid>
-          <Grid item md={6}>
+          <Grid item xs={12} sm={6}>
             <Card>
               <CardHeader title="Load Notes" />
               <Divider />

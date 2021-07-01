@@ -13,7 +13,6 @@ import {
 } from "@material-ui/core";
 import { getIn, useFormik } from "formik";
 import React from "react";
-import { JobProp } from "utils/interfaces";
 
 import * as yup from "yup";
 
@@ -61,37 +60,39 @@ const JobsView: React.FC<Props> = (props) => {
       <DialogTitle>Add Job</DialogTitle>
       <DialogContent>
         <form onSubmit={formik.handleSubmit} id="JobForm">
-          <TextField
-            variant="outlined"
-            label="Name"
-            name="name"
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            error={formik.touched.name && Boolean(formik.errors.name)}
-            helperText={formik.touched.name && formik.errors.name}
-            fullWidth
-            margin="dense"
-          />
-          <TextField
-            variant="outlined"
-            label="Address"
-            name="address.address1"
-            value={formik.values.address.address1}
-            onChange={formik.handleChange}
-            error={
-              getIn(formik.touched, "address.address1") &&
-              Boolean(getIn(formik.errors, "address.address1"))
-            }
-            helperText={
-              getIn(formik.touched, "address.address1") &&
-              getIn(formik.errors, "address.address1")
-            }
-            fullWidth
-            margin="dense"
-          />
-
           <Grid container spacing={3}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                label="Name"
+                name="name"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={formik.touched.name && formik.errors.name}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                label="Address"
+                name="address.address1"
+                value={formik.values.address.address1}
+                onChange={formik.handleChange}
+                error={
+                  getIn(formik.touched, "address.address1") &&
+                  Boolean(getIn(formik.errors, "address.address1"))
+                }
+                helperText={
+                  getIn(formik.touched, "address.address1") &&
+                  getIn(formik.errors, "address.address1")
+                }
+                fullWidth
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
                 label="City"
@@ -99,10 +100,10 @@ const JobsView: React.FC<Props> = (props) => {
                 value={formik.values.address.city}
                 onChange={formik.handleChange}
                 error={!!getIn(formik.errors, "address.city")}
-                margin="dense"
+                fullWidth
               />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={3}>
               <TextField
                 variant="outlined"
                 label="State"
@@ -110,10 +111,10 @@ const JobsView: React.FC<Props> = (props) => {
                 value={formik.values.address.state}
                 onChange={formik.handleChange}
                 error={!!getIn(formik.errors, "address.state")}
-                margin="dense"
+                fullWidth
               />
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={12} sm={3}>
               <TextField
                 variant="outlined"
                 label="ZipCode"
@@ -121,41 +122,50 @@ const JobsView: React.FC<Props> = (props) => {
                 value={formik.values.address.zipCode}
                 onChange={formik.handleChange}
                 error={!!getIn(formik.errors, "address.zipCode")}
-                margin="dense"
+                fullWidth
               />
             </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                label="Date"
+                name="date"
+                value={formik.values.date}
+                onChange={formik.handleChange}
+                error={!!formik.errors.date}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControl variant="outlined" fullWidth className="mb-3">
+                <InputLabel>Type</InputLabel>
+                <Select
+                  variant="outlined"
+                  label="Type"
+                  name="type"
+                  value={formik.values.type}
+                  onChange={formik.handleChange}
+                  error={!!formik.errors.type}
+                  fullWidth
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="Pick">Pick</MenuItem>
+                  <MenuItem value="Drop">Drop</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
-          <TextField
-            variant="outlined"
-            label="Date"
-            name="date"
-            value={formik.values.date}
-            onChange={formik.handleChange}
-            error={!!formik.errors.date}
-            margin="dense"
-          />
-          <FormControl variant="outlined" fullWidth className="mb-3">
-            <InputLabel>Type</InputLabel>
-            <Select
-              variant="outlined"
-              label="Type"
-              name="type"
-              value={formik.values.type}
-              onChange={formik.handleChange}
-              error={!!formik.errors.type}
-              margin="dense"
-            >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value="Pick">Pick</MenuItem>
-              <MenuItem value="Drop">Drop</MenuItem>
-            </Select>
-          </FormControl>
         </form>
       </DialogContent>
       <DialogActions>
-        <Button type="submit" color="primary" variant="contained" form="JobForm">
+        <Button
+          type="submit"
+          color="primary"
+          variant="contained"
+          form="JobForm"
+        >
           Submit
         </Button>
       </DialogActions>

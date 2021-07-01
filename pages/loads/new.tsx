@@ -47,6 +47,7 @@ import { isAuthenticated } from "lib/api/Users";
 import { getBrokers } from "lib/api/Brokers";
 import { getDrivers } from "lib/api/Drivers";
 import { getVehicles } from "lib/api/Vehicles";
+import { useRouter } from "next/router";
 
 interface Props {
   brokers: BrokerProp[];
@@ -78,7 +79,7 @@ const NewLoad: React.FC<Props> = (props) => {
   const [vehicle, setVehicle] = useState("");
 
   const classes = useStyles();
-
+  const router = useRouter();
   const auth = useAuth();
 
   const handleAddReference = () => {
@@ -119,6 +120,7 @@ const NewLoad: React.FC<Props> = (props) => {
       ).json();
       if (data.id) {
         alert(data.id);
+        router.push(`/loads/${data.id}`);
       } else {
         alert("Error");
       }
@@ -129,7 +131,7 @@ const NewLoad: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Grid container justify="space-between" alignItems="center">
+      <Grid container spacing={3} justify="space-between" alignItems="center">
         <Grid item>
           <Typography variant="h2">New Load</Typography>
           <Breadcrumbs separator={<ChevronRight />}>
@@ -159,7 +161,7 @@ const NewLoad: React.FC<Props> = (props) => {
                 <Divider className="my-3" />
                 <CardContent>
                   <Grid container spacing={3}>
-                    <Grid item md={9}>
+                    <Grid item xs={12} sm={8}>
                       <Autocomplete
                         value={broker}
                         options={brokers}
@@ -190,7 +192,7 @@ const NewLoad: React.FC<Props> = (props) => {
                         )}
                       />
                     </Grid>
-                    <Grid item md={3}>
+                    <Grid item xs={12} sm={4}>
                       <TextField
                         variant="outlined"
                         label="Rate"
@@ -230,9 +232,8 @@ const NewLoad: React.FC<Props> = (props) => {
                         ))}
                       </List>
                     </Grid>
-                    <Grid item md={5}>
+                    <Grid item xs={12} sm={6} md>
                       <TextField
-                        size="small"
                         variant="outlined"
                         label="Ref Name"
                         value={reference.name}
@@ -242,11 +243,11 @@ const NewLoad: React.FC<Props> = (props) => {
                             name: e.target.value,
                           }))
                         }
+                        fullWidth
                       />
                     </Grid>
-                    <Grid item md={5}>
+                    <Grid item xs={12} sm={6} md>
                       <TextField
-                        size="small"
                         variant="outlined"
                         label="Ref Value"
                         value={reference.value}
@@ -256,9 +257,10 @@ const NewLoad: React.FC<Props> = (props) => {
                             value: e.target.value,
                           }))
                         }
+                        fullWidth
                       />
                     </Grid>
-                    <Grid item md={2}>
+                    <Grid item xs={12} sm={12} md>
                       <Button
                         color="primary"
                         onClick={handleAddReference}
@@ -336,12 +338,12 @@ const NewLoad: React.FC<Props> = (props) => {
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item md={12}>
+            <Grid item xs={12}>
               <Card>
                 <CardHeader title="Assignemnts" />
                 <CardContent>
                   <Grid container spacing={3}>
-                    <Grid item md={6}>
+                    <Grid item xs={12} sm={6}>
                       <FormControl variant="outlined" fullWidth>
                         <InputLabel>Driver</InputLabel>
                         <Select
@@ -360,7 +362,7 @@ const NewLoad: React.FC<Props> = (props) => {
                         </Select>
                       </FormControl>
                     </Grid>
-                    <Grid item md={6}>
+                    <Grid item xs={12} sm={6}>
                       <FormControl variant="outlined" fullWidth>
                         <InputLabel>Vehicle</InputLabel>
                         <Select

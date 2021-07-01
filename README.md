@@ -17,6 +17,10 @@
 [x] Assign Driver and Vehicle
 [ ] Edit functions
 [ ] Add Notes
+[x] New Load Grid Fix
+[x] Load Detail Grid Fix
+[x] Redirect after new Load
+
 
 ## Files
 
