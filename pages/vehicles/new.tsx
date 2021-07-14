@@ -1,7 +1,6 @@
 import {
   Grid,
   Typography,
-  Breadcrumbs,
   Button,
   TextField,
   Card,
@@ -10,9 +9,10 @@ import {
   IconButton,
   InputAdornment,
 } from "@material-ui/core";
-import { ArrowBack, Check, ChevronRight } from "@material-ui/icons";
+import { ArrowBack, Check } from "@material-ui/icons";
 import { Layout } from "components/common";
-import { getIn, useFormik } from "formik";
+import { Breadcrumbs } from "components/ui";
+import { useFormik } from "formik";
 import { useAuth } from "lib";
 import Link from "next/link";
 import React from "react";
@@ -97,27 +97,16 @@ const NewVehicles = () => {
 
   return (
     <Layout>
-      <Grid container alignItems="center" justify="space-between">
-        <Grid item>
-          <Typography variant="h2">New Vehicle</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Link href="/vehicles">Vehicles</Link>
-            <Typography color="textPrimary">New Vehicle</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Link href="/vehicles">
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<ArrowBack />}
-            >
-              Cancel
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
+      <Breadcrumbs
+        title="New Vehicle"
+        data={[{ title: "Vehicles", url: "/vehicles" }]}
+      >
+        <Link href="/vehicles" passHref>
+          <Button variant="outlined" color="primary" startIcon={<ArrowBack />}>
+            Cancel
+          </Button>
+        </Link>
+      </Breadcrumbs>
       <Box className={classes.content}>
         <Card>
           <CardContent>
