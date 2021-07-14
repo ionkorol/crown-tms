@@ -1,5 +1,6 @@
 import { firestore } from "utils/firebaseAdmin";
 import { LoadProp } from "utils/interfaces";
+import { getBranch } from "../Branches";
 import { getDriver } from "../Drivers";
 import { getVehicle } from "../Vehicles";
 
@@ -17,8 +18,9 @@ const getLoad = async (clientId: string, loadId: string) => {
 
   const driver = await getDriver(clientId, loadData.driver);
   const vehicle = await getVehicle(clientId, loadData.vehicle);
+  const branch = await getBranch(clientId, loadData.branch);
 
-  return { ...loadData, broker: brokerData, driver, vehicle } as LoadProp;
+  return { ...loadData, broker: brokerData, driver, vehicle, branch } as LoadProp;
 };
 
 export default getLoad;

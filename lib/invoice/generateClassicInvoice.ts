@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 import { formatAddress, formatCurrency } from "lib";
-import { InvoiceProp } from "utils/interfaces";
+import { InvoiceProp, LoadLineItemProp } from "utils/interfaces";
 import "assets/verdana-normal";
 import "assets/verdana-bold";
 import "assets/verdana-italic";
@@ -149,13 +149,9 @@ const generatePDF = async (data: InvoiceProp) => {
 
   doc.setFontSize(12);
   doc.setFont("verdana");
-  doc.text(formatCurrency(data.load.rate), 95, 220);
+  doc.text(formatCurrency(handleTotal(data.load.lineItems)), 95, 220);
   doc.setFont("verdana", "bold");
-  doc.text(
-    formatCurrency(handleTotal(load.rate, data.additionalItems)),
-    95,
-    235
-  );
+  doc.text(formatCurrency(handleTotal(data.load.lineItems)), 95, 235);
 
   doc.setFontSize(10);
   doc.setFont("verdana", "italic");
@@ -173,14 +169,8 @@ const generatePDF = async (data: InvoiceProp) => {
 
 export default generatePDF;
 
-const handleTotal = (
-  rate: number,
-  additionalItems: { title: string; amount: number }[]
-) => {
+const handleTotal = (lineItems: LoadLineItemProp[]) => {
   let total = 0;
-  total += rate;
-  for (const fee of additionalItems) {
-    total += fee.amount;
-  }
+  lineItems.forEach((item) => (total += item.total));
   return total;
 };

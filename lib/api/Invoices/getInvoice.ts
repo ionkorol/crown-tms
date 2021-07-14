@@ -12,7 +12,12 @@ const getInvoice = async (clientId: string, invoiceId: string) => {
   if (invoiceSnap.exists) {
     const invoiceData = invoiceSnap.data();
     const loadData = await getLoad(clientId, invoiceId);
-    return { ...invoiceData, broker: loadData.broker, load: loadData };
+    return {
+      ...invoiceData,
+      broker: loadData.broker,
+      load: loadData,
+      branch: loadData.branch,
+    };
   } else {
     return false;
   }

@@ -3,32 +3,17 @@ import { Layout } from "components/common";
 import { DataTable } from "components/brokers";
 import { GetServerSideProps } from "next";
 import { BrokerProp } from "utils/interfaces";
-import {
-  Breadcrumbs,
-  createStyles,
-  Grid,
-  makeStyles,
-  Theme,
-  Typography,
-  Button,
-  Box,
-} from "@material-ui/core";
+import { Button, Box } from "@material-ui/core";
 import Link from "next/link";
-import { Add, ChevronRight } from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 import { isAuthenticated } from "lib/api/Users";
 import { getBrokers } from "lib/api/Brokers";
+import { Breadcrumbs } from "components/ui";
+import { useStyles } from "styles";
 
 interface Props {
   data: BrokerProp[];
 }
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    content: {
-      marginTop: theme.spacing(5),
-    },
-  })
-);
 
 const Brokers: React.FC<Props> = (props) => {
   const { data } = props;
@@ -57,22 +42,13 @@ const Brokers: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Grid container justify="space-between" alignItems="center">
-        <Grid item>
-          <Typography variant="h2">Brokers</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Typography color="textPrimary">Brokers</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Link href="/brokers/new">
-            <Button variant="contained" color="primary" startIcon={<Add />}>
-              New Broker
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
+      <Breadcrumbs title="Brokers" data={[]}>
+        <Link href="/brokers/new">
+          <Button variant="contained" color="primary" startIcon={<Add />}>
+            New Broker
+          </Button>
+        </Link>
+      </Breadcrumbs>
       <Box className={classes.content}>
         <DataTable data={currentData} handleDelete={handleDelete} />
       </Box>

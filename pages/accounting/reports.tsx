@@ -6,22 +6,25 @@ import {
   createStyles,
   makeStyles,
   Theme,
-  useTheme,
 } from "@material-ui/core";
 import { Layout } from "components/common";
-import React, { useRef } from "react";
+import { useAuth } from "lib";
+import { getInvoices } from "lib/api/Invoices";
+import { isAuthenticated } from "lib/api/Users";
+import { GetServerSideProps } from "next";
+import React, { useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Legend,
-  ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import { InvoiceProp } from "utils/interfaces";
 
-const useStyles = makeStyles((them: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     chart: {
       width: 900,
@@ -30,137 +33,39 @@ const useStyles = makeStyles((them: Theme) =>
   })
 );
 
-const data = [
-  {
-    name: "Jan",
-    uv: 4000,
-  },
-  {
-    name: "Feb",
-    uv: 3000,
-  },
-  {
-    name: "March",
-    uv: 2000,
-  },
-  {
-    name: "Apr",
-    uv: 2780,
-  },
-  {
-    name: "May",
-    uv: 1890,
-  },
-  {
-    name: "Jun",
-    uv: 2390,
-  },
-  {
-    name: "Jul",
-    uv: 0,
-  },
-  {
-    name: "Aug",
-    uv: 0,
-  },
-  {
-    name: "Sep",
-    uv: 0,
-  },
-  {
-    name: "Oct",
-    uv: 0,
-  },
-  {
-    name: "Nov",
-    uv: 0,
-  },
-  {
-    name: "Dec",
-    uv: 0,
-  },
-];
+interface Props {
+  data: InvoiceProp[];
+}
+const reports: React.FC<Props> = (props) => {
+  const { data } = props;
+  const [mgr, setMGR] = useState<{ [key: string]: number }[]>([]);
+  const auth = useAuth();
 
-const reports = () => {
-  const theme = useTheme();
-
-  //   const generateChart = () => {
-  //     const myChartRef = chartRef.current.getContext("2d");
-  //     Chart.register(...registerables);
-  //     new Chart(myChartRef, {
-  //       type: "bar",
-  //       data: {
-  //         //Bring in data
-  //         labels: [
-  //           "Jan",
-  //           "Feb",
-  //           "Mar",
-  //           "Apr",
-  //           "May",
-  //           "Jun",
-  //           "Jul",
-  //           "Aug",
-  //           "Sep",
-  //           "Nov",
-  //           "Dec",
-  //         ],
-  //         datasets: [
-  //           {
-  //             label: "Sales",
-  //             data: [86, 67, 91],
-  //             backgroundColor: theme.palette.primary.light,
-  //             hoverBackgroundColor: theme.palette.primary.dark,
-  //             borderColor: "#fff",
-  //             hoverBorderColor: theme.palette.primary.main,
-  //           },
-  //         ],
-  //       },
-  //       options: {
-  //         responsive: true,
-  //         maintainAspectRatio: true,
-  //         aspectRatio: 3,
-  //         backgroundColor: theme.palette.primary.main,
-  //         color: "#fff",
-  //         borderColor: "#fff",
-  //         legends: {
-  //           labels: {
-  //             color: theme.palette.primary.main,
-  //           },
-  //         },
-  //         title: {
-  //           text: "Test",
-  //         },
-  //         scales: {
-  //           y: {
-  //             color: "#fff",
-  //           },
-  //         },
-  //         //Customize chart options
-  //       },
-  //     });
-  //   };
-
-  //   return (
-  //     <Layout>
-  //       <Button onClick={generateChart}>Generate</Button>
-  //       <Card>
-  //         <CardHeader title="Monthly Growth Revenue" />
-  //         <CardContent>
-  //           <canvas style={{ height: "auto" }} ref={chartRef} />
-  //         </CardContent>
-  //       </Card>
-  //     </Layout>
-  //   );
+  const handleMGR = async () => {
+    const data = await (
+      await fetch("/api/accounting/reports/mgr", {
+        headers: {
+          user: auth.user.id,
+        },
+      })
+    ).json();
+    setMGR(data);
+  };
+  console.log(data);
 
   return (
     <Layout>
+      <Button onClick={handleMGR}>Generate</Button>
       <Card>
         <CardHeader title="Monthly Growth Revenue" />
         <CardContent>
           <BarChart
             width={1000}
             height={500}
-            data={data}
+            data={Object.entries(mgr).map(([key, value]) => ({
+              name: key,
+              value,
+            }))}
             style={{ padding: 10 }}
           >
             <CartesianGrid strokeDasharray="4" />
@@ -172,7 +77,7 @@ const reports = () => {
             />
             <Tooltip />
             <Legend />
-            <Bar dataKey="uv" fill="#8884d8" />
+            <Bar dataKey="value" fill="#8884d8" />
           </BarChart>
         </CardContent>
       </Card>
@@ -181,3 +86,6 @@ const reports = () => {
 };
 
 export default reports;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) =>
+  await isAuthenticated(ctx, () => ({ props: {} }), "/");

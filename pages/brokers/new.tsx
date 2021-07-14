@@ -1,20 +1,11 @@
-import {
-  Breadcrumbs,
-  Button,
-  Grid,
-  Theme,
-  Typography,
-  makeStyles,
-  createStyles,
-  TextField,
-  Paper,
-  Box,
-} from "@material-ui/core";
-import { ArrowBack, ChevronRight } from "@material-ui/icons";
+import { Button, Grid, TextField, Paper, Box } from "@material-ui/core";
+import { ArrowBack } from "@material-ui/icons";
 import { Layout } from "components/common";
+import { Breadcrumbs } from "components/ui";
 import { getIn, useFormik } from "formik";
 import Link from "next/link";
 import React from "react";
+import { useStyles } from "styles";
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -35,14 +26,6 @@ const schema = yup.object().shape({
   accountingEmail: yup.string().required("Accounting email is required"),
   terms: yup.string().required("Terms are required"),
 });
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    content: {
-      marginTop: theme.spacing(5),
-    },
-  })
-);
 
 const NewBroker = () => {
   const classes = useStyles();
@@ -81,27 +64,17 @@ const NewBroker = () => {
   });
   return (
     <Layout>
-      <Grid container justify="space-between" alignItems="center">
-        <Grid item>
-          <Typography variant="h2">New Broker</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Link href="/loads">Brokers</Link>
-            <Typography color="textPrimary">New Broker</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Link href="/brokers">
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<ArrowBack />}
-            >
-              Cancel
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
+      <Breadcrumbs
+        title="New Broker"
+        data={[{ title: "Brokers", url: "/brokers" }]}
+      >
+        <Link href="/brokers">
+          <Button variant="outlined" color="primary" startIcon={<ArrowBack />}>
+            Cancel
+          </Button>
+        </Link>
+      </Breadcrumbs>
+
       <Paper className={classes.content}>
         <Box padding={3}>
           <form onSubmit={formik.handleSubmit}>

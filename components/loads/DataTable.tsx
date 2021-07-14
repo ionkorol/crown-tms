@@ -4,23 +4,18 @@ import {
   GridCellParams,
   GridColDef,
   GridRowModel,
-  GridRowsProp,
-  GridToolbar,
-  GridPanel,
   GridValueFormatterParams,
   GridToolbarContainer,
 } from "@material-ui/data-grid";
-import { LoadProp } from "utils/interfaces";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { LoadLineItemProp, LoadProp } from "utils/interfaces";
 import {
-  Icon,
+  Button,
   IconButton,
   InputAdornment,
   Paper,
   TextField,
 } from "@material-ui/core";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { Visibility } from "@material-ui/icons";
+import { Close, Visibility } from "@material-ui/icons";
 import Link from "next/link";
 import { formatCurrency } from "lib";
 import { Search, Check } from "@material-ui/icons";
@@ -31,15 +26,8 @@ interface Props {
   // handleEdit: (invoiceData: LoadProp) => void;
 }
 
-const useStyles = makeStyles((theme) =>
-  createStyles({
-    table: {},
-  })
-);
-
 const DataTable: React.FC<Props> = (props) => {
   const { data } = props;
-  const classes = useStyles();
   const columns: GridColDef[] = [
     { field: "id", headerName: "#", width: 100 },
     { field: "broker", headerName: "Broker", flex: 3, sortable: false },
@@ -56,8 +44,12 @@ const DataTable: React.FC<Props> = (props) => {
       field: "amount",
       headerName: "Amount",
       flex: 1,
-      valueFormatter: (params: GridValueFormatterParams) =>
-        formatCurrency(params.value as number),
+      valueFormatter: (params: GridValueFormatterParams) => {
+        let total = 0;
+        const lineItems = params.value as LoadLineItemProp[];
+        lineItems.forEach((item) => (total += item.total));
+        return formatCurrency(total);
+      },
     },
     {
       field: "status",
@@ -65,7 +57,7 @@ const DataTable: React.FC<Props> = (props) => {
       flex: 1,
       renderCell: (params: GridCellParams) => (
         <CustomBadge color="success">{params.value}</CustomBadge>
-      )
+      ),
     },
     {
       field: "actions",
@@ -90,7 +82,7 @@ const DataTable: React.FC<Props> = (props) => {
         id: invoice.id,
         broker: invoice.broker.dba,
         date: invoice.createdAt,
-        amount: invoice.rate,
+        amount: invoice.lineItems,
         status: invoice.status,
         actions: invoice.id,
       } as GridRowModel)
@@ -104,7 +96,6 @@ const DataTable: React.FC<Props> = (props) => {
         pageSize={10}
         autoHeight
         components={{ Toolbar: CustomToolbar }}
-        className={classes.table}
       />
     </Paper>
   );
@@ -136,6 +127,15 @@ const CustomToolbar = () => {
           }}
         />
       </form>
+      <Button color="primary" startIcon={<Visibility />}>
+        View Load
+      </Button>
+      <Button color="primary" startIcon={<Visibility />}>
+        Edit Load
+      </Button>
+      <Button color="primary" startIcon={<Close />}>
+        Cancel Load
+      </Button>
     </GridToolbarContainer>
   );
 };

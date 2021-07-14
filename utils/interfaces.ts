@@ -1,30 +1,61 @@
 export interface LoadProp {
+  // Misc
   id: number;
+  createdAt: number;
+
+  // General
+  status: "Booked" | "Dispatched" | "In Transit" | "Completed";
+  branch: ClientBranchProp;
   references: {
     name: string;
     value: string;
   }[];
-  isTonu: boolean;
-  jobs: JobProp[];
-  rate: number;
-  createdAt: number;
+  lineItems: LoadLineItemProp[];
   notes: string[];
-  status: "In Progress" | "Complete";
+
+  // Jobs
+  jobs: JobProp[];
+
+  // Attachements
   invoice?: InvoiceProp;
   broker: BrokerProp;
   driver?: DriverProp;
   vehicle?: VehicleProp;
 }
 
+export interface LoadLineItemProp {
+  title:
+    | "Line Haul"
+    | "Tolls"
+    | "Lumper"
+    | "Fuel"
+    | "Mileage"
+    | "Deadhead"
+    | "Extra Stops";
+  quantity: number;
+  rate: number;
+  total: number;
+  notes: string;
+}
+
 export interface InvoiceProp {
+  // Misc
   id: number;
   createdAt: number;
+
+  // General
   status: "Generated" | "Pending" | "Paid";
-  balance: number;
-  additionalItems: {
-    title: string;
+  payments: {
+    date: number;
+    method: string;
+    referece: string;
     amount: number;
+    notes: string;
   }[];
+  balance: number;
+  notes: string;
+  // Attachements
+  branch?: ClientBranchProp;
   load?: LoadProp;
   broker?: BrokerProp;
 }
@@ -67,9 +98,25 @@ export interface UserProp {
 
 export interface ClientProp {
   id: string;
-  loads: LoadProp[];
-  invoices: InvoiceProp[];
   users: string[];
+  branches: string[];
+  loads?: LoadProp[];
+  invoices?: InvoiceProp[];
+}
+
+export interface ClientBranchProp {
+  id: string;
+  // Info
+  name: string;
+  dba?: string;
+  mc: string;
+  usdot: string;
+  // Contact
+  address: AddressProp;
+  phone: string;
+  fax: string;
+  dispatchEmail: string;
+  accountingEmail: string;
 }
 
 export interface FileProp {

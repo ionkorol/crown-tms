@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { GetServerSideProps } from "next";
 import { LoadProp } from "utils/interfaces";
 import { Layout } from "components/common";
 import {
-  Breadcrumbs,
   Card,
   CardActions,
   CardContent,
   CardHeader,
-  createStyles,
   Divider,
   Grid,
-  makeStyles,
   Table,
   TableBody,
   TableCell,
@@ -22,74 +19,75 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  Theme,
   TextField,
   Box,
+  Paper,
+  Stack,
 } from "@material-ui/core";
 import Link from "next/link";
 import { DropJobIcon, PickJobIcon } from "components/ui/Icons";
-import { FilesView } from "components/load";
-import { formatAddress, formatCurrency } from "lib";
+import { FilesView, LineItemsView } from "components/load";
+import { formatAddress, useAuth, useSnack } from "lib";
 import { isAuthenticated } from "lib/api/Users";
 import { getLoad } from "lib/api/Loads";
-import { ChevronRight } from "@material-ui/icons";
+import { Breadcrumbs } from "components/ui";
+import { useStyles } from "styles";
+import moment from "moment";
 
 interface Props {
   data: LoadProp;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    content: {
-      marginTop: theme.spacing(5),
-    },
-  })
-);
-
 const Load: React.FC<Props> = (props) => {
   const { data } = props;
   const classes = useStyles();
   const [showFiles, setShowFiles] = useState(false);
+  const auth = useAuth();
+  const snack = useSnack();
+
+  const handleSendToAccounting = async () => {
+    try {
+      const res = await fetch(`/api/invoices/${data.id}`, {
+        method: "POST",
+        headers: {
+          user: auth.user.id,
+        },
+      });
+      const jsonData = await res.json();
+      console.log(jsonData);
+      snack.generate("Load has been sent to Accounting", "success");
+    } catch (error) {
+      snack.generate(error.message, "error");
+    }
+  };
 
   return (
     <Layout>
-      <Grid container spacing={3} justify="space-between" alignItems="center">
-        <Grid item>
-          <Typography variant="h2">Load# {data.id}</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Link href="/loads">Loads</Link>
-            <Typography color="textPrimary">Load# {data.id}</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Grid container spacing={3}>
-            <Grid item>
-              <Button variant="outlined" color="primary">
-                Edit Load
-              </Button>
-            </Grid>
-            <Grid item>
-              <Link href={`/invoices/${data.id}`}>
-                <Button variant="contained" color="primary">
-                  View Invoice
-                </Button>
-              </Link>
-            </Grid>
-            <Grid item>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setShowFiles(true)}
-              >
-                Manage Files
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
+      <Breadcrumbs
+        title="Load Details"
+        data={[{ title: "Loads", url: "/loads" }]}
+      >
+        <Button variant="outlined" color="primary">
+          Edit Load
+        </Button>
+      </Breadcrumbs>
+
       <Box className={classes.content}>
         <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Paper sx={{ padding: [1, 2] }}>
+              <Stack direction="row" spacing={3} sx={{ alignItems: "center" }}>
+                <Typography variant="h5">Actions: </Typography>
+                <Button onClick={handleSendToAccounting}>
+                  Send To Accounting
+                </Button>
+                <Link href={`/invoices/${data.id}`}>
+                  <Button>View Invoice</Button>
+                </Link>
+                <Button onClick={() => setShowFiles(true)}>Manage Files</Button>
+              </Stack>
+            </Paper>
+          </Grid>
           <Grid item xs={12} sm={6}>
             <Card>
               <CardHeader title="Load Info" />
@@ -104,6 +102,14 @@ const Load: React.FC<Props> = (props) => {
                   </TableRow>
                   <TableRow>
                     <TableCell>
+                      <strong>Created</strong>
+                    </TableCell>
+                    <TableCell>
+                      {moment(data.createdAt).format("lll")}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
                       <strong>References</strong>
                     </TableCell>
                     <TableCell>
@@ -112,18 +118,7 @@ const Load: React.FC<Props> = (props) => {
                       )}
                     </TableCell>
                   </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <strong>TONU</strong>
-                    </TableCell>
-                    <TableCell>{data.isTonu ? "Yes" : "No"}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>
-                      <strong>Rate</strong>
-                    </TableCell>
-                    <TableCell>{formatCurrency(data.rate)}</TableCell>
-                  </TableRow>
+
                   <TableRow>
                     <TableCell>
                       <strong>Driver / Vehicle</strong>
@@ -132,6 +127,12 @@ const Load: React.FC<Props> = (props) => {
                       {data.driver.firstName} {data.driver.lastName} /{" "}
                       {data.vehicle.id}
                     </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <strong>Branch</strong>
+                    </TableCell>
+                    <TableCell>{data.branch.name}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -211,7 +212,11 @@ const Load: React.FC<Props> = (props) => {
               </CardActions>
             </Card>
           </Grid>
+
           <Grid item xs={12} sm={6}>
+            <LineItemsView data={data.lineItems} />
+          </Grid>
+          <Grid item xs={12}>
             <Card>
               <CardHeader title="Load Notes" />
               <Divider />

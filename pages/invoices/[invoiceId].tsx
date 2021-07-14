@@ -10,12 +10,8 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Breadcrumbs,
   Button,
   Box,
-  makeStyles,
-  Theme,
-  createStyles,
   CardContent,
   CardActions,
 } from "@material-ui/core";
@@ -27,27 +23,20 @@ import { InvoiceProp } from "utils/interfaces";
 import { GetServerSideProps } from "next";
 import { formatAddress, formatCurrency } from "lib";
 import { generateClassicInvoice } from "lib/invoice";
-import { createInvoice, getInvoice } from "lib/api/Invoices";
+import { getInvoice } from "lib/api/Invoices";
 import { isAuthenticated } from "lib/api/Users";
 import { StatusBadge, StatusChange } from "components/invoices";
-import { ChevronRight } from "@material-ui/icons";
+import { Breadcrumbs } from "components/ui";
+import { useStyles } from "styles";
 
 interface Props {
   data: InvoiceProp;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    content: {
-      marginTop: theme.spacing(5),
-    },
-  })
-);
-
 const Invoice: React.FC<Props> = (props) => {
   const { data } = props;
 
-  const { broker, load } = data;
+  const { broker, load, branch } = data;
   const classes = useStyles();
   const [showChangeStatus, setShowChangeStatus] = useState(false);
 
@@ -56,60 +45,52 @@ const Invoice: React.FC<Props> = (props) => {
 
   const handleTotal = () => {
     let total = 0;
-    total += load.rate;
-    for (const fee of data.additionalItems) {
-      total += fee.amount;
-    }
+
+    load.lineItems.forEach((item) => (total += item.total));
+
     return total;
   };
 
   return (
     <Layout>
-      <Grid container justify="space-between" alignItems="center">
-        <Grid item>
-          <Typography variant="h2">Invoice Details</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Link href="/invoices">Invoices</Link>
-            <Typography color="textPrimary">Invoice# {data.id}</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Grid container spacing={3}>
-            <Grid item>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => setShowChangeStatus(true)}
-              >
-                Change Status
+      <Breadcrumbs title={`Invoice# ${data.id}`}>
+        <Grid container spacing={3}>
+          <Grid item>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setShowChangeStatus(true)}
+            >
+              Change Status
+            </Button>
+          </Grid>
+          <Grid item>
+            <Link href={`/loads/${data.id}`}>
+              <Button variant="contained" color="primary">
+                View Load
               </Button>
-            </Grid>
-            <Grid item>
-              <Link href={`/loads/${data.id}`}>
-                <Button variant="contained" color="primary">
-                  View Load
-                </Button>
-              </Link>
-            </Grid>
+            </Link>
           </Grid>
         </Grid>
-      </Grid>
+      </Breadcrumbs>
       <Card className={classes.content}>
         <CardContent>
           <Box padding={3}>
             <Grid container spacing={3}>
               <Grid item md={6}>
                 <Typography>
-                  <strong>J EXPRESS LLC</strong>
+                  <strong>{branch.name}</strong>
                 </Typography>
-                <Typography>4607 PINECREST DR</Typography>
-                <Typography>BUFORD, GA 30518</Typography>
+                <Typography>{branch.address.address1}</Typography>
+                <Typography>
+                  {branch.address.city}, {branch.address.state}{" "}
+                  {branch.address.zipCode}
+                </Typography>
                 <br />
-                <Typography>678-482-0071 phone</Typography>
-                <Typography>877-828-2599 fax</Typography>
+                <Typography>{branch.phone} phone</Typography>
+                <Typography>{branch.fax} fax</Typography>
                 <br />
-                <Typography>JXbilling@gmail.com</Typography>
+                <Typography>{branch.accountingEmail}</Typography>
               </Grid>
               <Grid item md={6} direction="row">
                 <Typography variant="h3">Invoice# {data.id}</Typography>
@@ -197,18 +178,14 @@ const Invoice: React.FC<Props> = (props) => {
                         <TableCell />
                       </TableRow>
                     ))}
-                    <TableRow>
-                      <TableCell />
-                      <TableCell>Confirmed Rate</TableCell>
-                      <TableCell>{formatCurrency(load.rate)}</TableCell>
-                    </TableRow>
-                    {data.additionalItems.map((item, index) => (
+                    {load.lineItems.map((item, index) => (
                       <TableRow key={index}>
                         <TableCell />
                         <TableCell>{item.title}</TableCell>
-                        <TableCell>{item.amount}</TableCell>
+                        <TableCell>{formatCurrency(item.total)}</TableCell>
                       </TableRow>
                     ))}
+
                     <TableRow>
                       <TableCell />
                       <TableCell>
@@ -257,22 +234,13 @@ export default Invoice;
 export const getServerSideProps: GetServerSideProps = async (ctx) =>
   await isAuthenticated(
     ctx,
-    async (userData) => {
-      let data = await getInvoice(
-        userData.clientId,
-        ctx.query.invoiceId as string
-      );
-      if (!data) {
-        data = await createInvoice(
+    async (userData) => ({
+      props: {
+        data: await getInvoice(
           userData.clientId,
           ctx.query.invoiceId as string
-        );
-      }
-      return {
-        props: {
-          data,
-        },
-      };
-    },
+        ),
+      },
+    }),
     "/"
   );

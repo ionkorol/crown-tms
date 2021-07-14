@@ -16,7 +16,7 @@ import {
   FormLabel,
   Typography,
 } from "@material-ui/core";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import { createStyles, makeStyles } from "@material-ui/styles";
 import { FileProp } from "utils/interfaces";
 import { useAuth } from "lib";
 import { storage } from "utils/firebaseClient";
@@ -193,7 +193,7 @@ const FilesView: React.FC<Props> = (props) => {
 
 export default FilesView;
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     uploadControl: {
       margin: "10px 0",

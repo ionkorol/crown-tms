@@ -7,8 +7,7 @@ const getLoads = async (clientId: string) => {
     .collection("clients")
     .doc(clientId)
     .collection("loads")
-    .orderBy("id")
-    .limitToLast(10)
+    .where("status", "!=", "Completed")
     .get();
   let loadsData = [];
   for (const loadSnap of loadsQuery.docs) {

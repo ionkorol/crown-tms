@@ -1,11 +1,6 @@
-import {
-  Box,
-  createStyles,
-  makeStyles,
-  Theme,
-  Typography,
-} from "@material-ui/core";
+import { Box, Theme, Typography } from "@material-ui/core";
 import { blue, green, orange, red } from "@material-ui/core/colors";
+import { makeStyles, createStyles } from "@material-ui/styles";
 import React from "react";
 
 const useStyles = makeStyles((theme: Theme) =>

@@ -4,13 +4,17 @@ import { getLoad } from "lib/api/Loads";
 
 const createInvoice = async (clientId: string, invoiceId: string) => {
   const loadData = await getLoad(clientId, invoiceId);
+  let invoiceBalance = 0;
+
+  loadData.lineItems.forEach((item) => (invoiceBalance += item.total));
 
   const invoiceData = {
     id: Number(invoiceId),
     createdAt: Date.now(),
     status: "Generated",
-    balance: loadData.rate,
-    additionalItems: [],
+    payments: [],
+    balance: invoiceBalance,
+    notes: "",
   } as InvoiceProp;
 
   await firestore()

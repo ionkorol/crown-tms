@@ -4,12 +4,8 @@ import {
   ListItemText,
   Collapse,
   List,
-  Button,
-  makeStyles,
-  Theme,
-  createStyles,
 } from "@material-ui/core";
-import { ExpandLess, ExpandMore, StarBorder } from "@material-ui/icons";
+import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -18,12 +14,6 @@ interface Props {
   icon: any;
   url?: string;
 }
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    nested: {},
-  })
-);
 
 const NavItem: React.FC<Props> = (props) => {
   const { text, icon, children, url } = props;

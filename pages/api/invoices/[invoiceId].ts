@@ -5,7 +5,6 @@ import {
   createInvoice,
   getInvoice,
 } from "lib/api/Invoices";
-import { getLoad } from "lib/api/Loads";
 import { getUser } from "lib/api/Users";
 import { NextApiRequest, NextApiResponse } from "next";
 

@@ -1,43 +1,42 @@
-import "styles/globals.scss";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import {
-  faCrown,
-  faEye,
-  faFileInvoice,
-  faPencilAlt,
-  faPlus,
-  faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import React from "react";
-import { PageTransition } from "components/common";
+import React, { useEffect } from "react";
+import { PageLoading } from "components/common";
 import AuthProvider from "utils/AuthProvider";
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "styles/theme";
+import { CssBaseline } from "@material-ui/core";
 import "@fontsource/roboto";
+import createCache from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
+import SnackProvider from "utils/SnackProvider";
+import { LocalizationProvider } from "@material-ui/lab";
+import AdapterDateMoment from "@material-ui/lab/AdapterMoment";
 
-library.add(faCrown, faFileInvoice, faPencilAlt, faPlus, faTrashAlt, faEye);
+const cache = createCache({ key: "css" });
+cache.compat = true;
 
-function MyApp({ Component, pageProps }) {
-  React.useEffect(() => {
-    // Remove the server-side injected CSS.
+const MyApp = ({ Component, pageProps }) => {
+  useEffect(() => {
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
-      jssStyles.parentElement!.removeChild(jssStyles);
+      jssStyles.parentElement.removeChild(jssStyles);
     }
   }, []);
+
   return (
-    <AuthProvider>
+    <CacheProvider value={cache}>
       <ThemeProvider theme={theme}>
-        <PageTransition
-          color="#edbe48"
-          startPosition={0.3}
-          stopDelayMs={200}
-          height={5}
-        />
-        <Component {...pageProps} />
+        <LocalizationProvider dateAdapter={AdapterDateMoment} dateFormats={{normalDate: 'MM/DD/YYYY'}}>
+          <SnackProvider>
+            <AuthProvider>
+              <PageLoading />
+              <CssBaseline />
+              <Component {...pageProps} />
+            </AuthProvider>
+          </SnackProvider>
+        </LocalizationProvider>
       </ThemeProvider>
-    </AuthProvider>
+    </CacheProvider>
   );
-}
+};
 
 export default MyApp;

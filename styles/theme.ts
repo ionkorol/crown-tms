@@ -1,18 +1,10 @@
-import { createMuiTheme, StyleRules } from "@material-ui/core/styles";
-import red from "@material-ui/core/colors/red";
-import { green } from "@material-ui/core/colors";
-import { CardHeaderClassKey, TableClassKey } from "@material-ui/core";
-
-declare module "@material-ui/core/styles/overrides" {
-  export interface ComponentNameToClassKey {
-    MuiDataGrid: TableClassKey;
-  }
-}
+import { createTheme } from "@material-ui/core/styles";
+import { green, red } from "@material-ui/core/colors";
 
 // Create a theme instance.
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
-    type: "dark",
+    mode: "dark",
     primary: {
       main: "#ffbb48",
       contrastText: "#fff",
@@ -39,15 +31,33 @@ const theme = createMuiTheme({
     borderRadius: 20,
   },
   typography: {},
-  overrides: {
-    MuiCardHeader: {
-      action: {
-        alignSelf: "center",
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {},
       },
     },
-    MuiDataGrid: {
-      root: {
-        border: "none",
+    MuiTextField: {
+      defaultProps: {
+        variant: "outlined",
+        fullWidth: true,
+      },
+    },
+    MuiFormControl: {
+      defaultProps: {
+        fullWidth: true,
+      },
+    },
+    MuiCardHeader: {
+      styleOverrides: {
+        root: {
+          borderBottom: "1px solid gray",
+        },
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        fullWidth: true,
       },
     },
   },

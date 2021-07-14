@@ -4,37 +4,16 @@ import { Layout } from "components/common";
 import { LoadProp } from "utils/interfaces";
 import { DataTable } from "components/loads";
 import Link from "next/link";
-import {
-  Box,
-  Breadcrumbs,
-  Button,
-  createStyles,
-  Grid,
-  makeStyles,
-  Theme,
-  Typography,
-} from "@material-ui/core";
-import { Add, ChevronRight } from "@material-ui/icons";
+import { Box, Button } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 import { isAuthenticated } from "lib/api/Users";
 import { getLoads } from "lib/api/Loads";
+import { Breadcrumbs } from "components/ui";
+import { useStyles } from "styles";
 
 interface Props {
   data: LoadProp[];
 }
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    content: {
-      marginTop: theme.spacing(5),
-    },
-    controls: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      padding: theme.spacing(2),
-    },
-  })
-);
 
 const Loads: React.FC<Props> = (props) => {
   const { data } = props;
@@ -42,22 +21,13 @@ const Loads: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Grid container justify="space-between" alignItems="center">
-        <Grid item>
-          <Typography variant="h2">Loads</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Typography color="textPrimary">Loads</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Link href="/loads/new">
-            <Button variant="contained" color="primary" startIcon={<Add />}>
-              New Load
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
+      <Breadcrumbs title="Loads" data={[]}>
+        <Link href="/loads/new">
+          <Button variant="contained" color="primary" startIcon={<Add />}>
+            New Load
+          </Button>
+        </Link>
+      </Breadcrumbs>
       <Box className={classes.content}>
         <DataTable data={data.sort((a, b) => b.id - a.id)} />
       </Box>

@@ -4,14 +4,11 @@ import {
   GridCellParams,
   GridColDef,
   GridRowModel,
-  GridRowsProp,
-  GridToolbar,
   GridToolbarContainer,
   GridValueFormatterParams,
 } from "@material-ui/data-grid";
-import { BrokerProp, InvoiceProp } from "utils/interfaces";
+import { InvoiceProp, LoadLineItemProp } from "utils/interfaces";
 import {
-  Chip,
   FormControl,
   Grid,
   IconButton,
@@ -26,6 +23,7 @@ import {
 import { Check, Search, Visibility } from "@material-ui/icons";
 import { Box } from "@material-ui/core";
 import { CustomBadge } from "components/ui";
+import { formatCurrency } from "lib";
 
 interface Props {
   data: InvoiceProp[];
@@ -77,11 +75,12 @@ const DataTable: React.FC<Props> = (props) => {
       field: "amount",
       headerName: "Amount",
       flex: 1,
-      valueFormatter: (params: GridValueFormatterParams) =>
-        (params.value as number).toLocaleString("en-US", {
-          style: "currency",
-          currency: "USD",
-        }),
+      valueFormatter: (params: GridValueFormatterParams) => {
+        let total = 0;
+        const lineItems = params.value as LoadLineItemProp[];
+        lineItems.forEach((item) => (total += item.total));
+        return formatCurrency(total);
+      },
     },
     {
       field: "actions",
@@ -103,7 +102,7 @@ const DataTable: React.FC<Props> = (props) => {
         broker: invoice.broker.dba,
         status: invoice.status,
         date: new Date(invoice.createdAt).toLocaleDateString(),
-        amount: invoice.load.rate,
+        amount: invoice.load.lineItems,
         actions: invoice,
       } as GridRowModel)
   );

@@ -4,75 +4,73 @@ import Link from "next/link";
 import React, { useState } from "react";
 import {
   BrokerProp,
+  ClientBranchProp,
   DriverProp,
   JobProp,
-  LoadProp,
+  LoadLineItemProp,
   VehicleProp,
 } from "utils/interfaces";
-import { JobsView } from "components/loads/Form";
+import { JobsModal, LineItemModal } from "components/loads/Form";
 import {
   Card,
-  Breadcrumbs,
   Button,
   Typography,
   Grid,
-  makeStyles,
-  Theme,
-  createStyles,
   TextField,
-  Switch,
-  FormControlLabel,
   List,
   ListItem,
   ListItemText,
-  Divider,
-  ListItemIcon,
   ListItemSecondaryAction,
   IconButton,
   CardHeader,
   CardContent,
-  ListSubheader,
   Box,
   FormControl,
   Select,
   MenuItem,
   InputLabel,
+  Autocomplete,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
 } from "@material-ui/core";
-import { useAuth } from "lib";
+import { formatAddress, useAuth } from "lib";
 
-import { ArrowBack, Delete, Add, ChevronRight } from "@material-ui/icons";
+import { ArrowBack, Delete, Add } from "@material-ui/icons";
 import { DropJobIcon, PickJobIcon } from "components/ui/Icons";
-import { Autocomplete } from "@material-ui/lab";
 import { isAuthenticated } from "lib/api/Users";
 import { getBrokers } from "lib/api/Brokers";
 import { getDrivers } from "lib/api/Drivers";
 import { getVehicles } from "lib/api/Vehicles";
 import { useRouter } from "next/router";
+import { Breadcrumbs } from "components/ui";
+import { useStyles } from "styles";
+import { getBranches } from "lib/api/Branches";
+import { LineItemsView } from "components/load";
 
 interface Props {
   brokers: BrokerProp[];
   drivers: DriverProp[];
   vehicles: VehicleProp[];
+  branches: ClientBranchProp[];
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    content: {
-      marginTop: theme.spacing(5),
-    },
-  })
-);
-
 const NewLoad: React.FC<Props> = (props) => {
-  const { brokers, drivers, vehicles } = props;
-  const [showAddJob, setShowAddJob] = useState(false);
+  const { brokers, drivers, vehicles, branches } = props;
+  const [showJobModal, setShowJobModal] = useState(false);
+  const [showLineItemModal, setShowLineItemModal] = useState(false);
+
+  const [status, setStatus] = useState("");
+  const [branch, setBranch] = useState(branches[0].id);
+
   const [broker, setBroker] = useState<BrokerProp | null>(brokers[0]);
   const [references, setReferences] = useState<
     { name: string; value: string }[]
   >([]);
-  const [isTonu, setIsTonu] = useState(false);
   const [jobs, setJobs] = useState<JobProp[]>([]);
-  const [rate, setRate] = useState("");
+  const [lineItems, setLineItems] = useState<LoadLineItemProp[]>([]);
   const [reference, setReference] = useState({ name: "", value: "" });
 
   const [driver, setDriver] = useState("");
@@ -100,24 +98,26 @@ const NewLoad: React.FC<Props> = (props) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const data = await (
-        await fetch("/api/loads", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            user: auth.user.id,
-          },
-          body: JSON.stringify({
-            broker: broker.id,
-            references,
-            isTonu,
-            jobs,
-            rate: Number(rate),
-            driver,
-            vehicle,
-          }),
-        })
-      ).json();
+      const res = await fetch("/api/loads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          user: auth.user.id,
+        },
+        body: JSON.stringify({
+          status,
+          branch,
+          broker: broker.id,
+          references,
+          jobs,
+          lineItems,
+          driver,
+          vehicle,
+          notes: [],
+        }),
+      });
+
+      const data = await res.json();
       if (data.id) {
         alert(data.id);
         router.push(`/loads/${data.id}`);
@@ -131,44 +131,67 @@ const NewLoad: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Grid container spacing={3} justify="space-between" alignItems="center">
-        <Grid item>
-          <Typography variant="h2">New Load</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Link href="/loads">Loads</Link>
-            <Typography color="textPrimary">New Load</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Link href="/loads">
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<ArrowBack />}
-            >
-              Cancel
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
+      <Breadcrumbs title="New Load" data={[{ title: "Loads", url: "/loads" }]}>
+        <Link href="/loads">
+          <Button variant="outlined" color="primary" startIcon={<ArrowBack />}>
+            Cancel
+          </Button>
+        </Link>
+      </Breadcrumbs>
       <Box className={classes.content}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item md={12}>
               <Card>
                 <CardHeader title="Load Info" />
-                <Divider className="my-3" />
                 <CardContent>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} sm={8}>
+                    <Grid item xs={12} md={6}>
+                      <FormControl fullWidth>
+                        <InputLabel>Status</InputLabel>
+                        <Select
+                          value={status}
+                          onChange={(e) => setStatus(e.target.value)}
+                          label="Status"
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          <MenuItem value="Booked">Booked</MenuItem>
+                          <MenuItem value="Dispatched">Dispatched</MenuItem>
+                          <MenuItem value="In Transit">In Transit</MenuItem>
+                          <MenuItem value="Completed">Completed</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <FormControl fullWidth>
+                        <InputLabel>Branch</InputLabel>
+                        <Select
+                          value={branch}
+                          onChange={(e) => setBranch(e.target.value)}
+                          label="Branch"
+                        >
+                          {branches.map((item) => (
+                            <MenuItem value={item.id} key={item.id}>
+                              {item.name}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
                       <Autocomplete
+                        autoHighlight
                         value={broker}
+                        onChange={(e, newValue: BrokerProp | null) =>
+                          setBroker(newValue)
+                        }
                         options={brokers}
                         getOptionLabel={(option) =>
                           `${option.name}(${option.dba})`
                         }
-                        renderOption={(option) => (
+                        renderOption={(props, option) => (
                           <Box>
                             <Typography>{option.name}</Typography>
                             <Typography variant="caption" color="textSecondary">
@@ -176,13 +199,9 @@ const NewLoad: React.FC<Props> = (props) => {
                             </Typography>
                           </Box>
                         )}
-                        onChange={(e, newValue: BrokerProp | null) =>
-                          setBroker(newValue)
-                        }
                         renderInput={(params) => (
                           <TextField
                             {...params}
-                            variant="outlined"
                             label="Select Broker"
                             inputProps={{
                               ...params.inputProps,
@@ -192,49 +211,8 @@ const NewLoad: React.FC<Props> = (props) => {
                         )}
                       />
                     </Grid>
-                    <Grid item xs={12} sm={4}>
-                      <TextField
-                        variant="outlined"
-                        label="Rate"
-                        name="rate"
-                        value={rate}
-                        onChange={(e) => setRate(e.target.value)}
-                        fullWidth
-                        className="mb-3"
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <List className="mb-3">
-                        {!references.length && (
-                          <ListItem>
-                            <ListItemText
-                              primary={
-                                <Typography color="error">
-                                  No load references
-                                </Typography>
-                              }
-                            />
-                          </ListItem>
-                        )}
-                        {references.map((ref, index) => (
-                          <ListItem divider key={index}>
-                            <ListItemText
-                              primary={`${ref.name}: ${ref.value}`}
-                            />
-                            <ListItemSecondaryAction>
-                              <IconButton
-                                onClick={() => handleRemoveReference(ref.name)}
-                              >
-                                <Delete color="error" />
-                              </IconButton>
-                            </ListItemSecondaryAction>
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Grid>
                     <Grid item xs={12} sm={6} md>
                       <TextField
-                        variant="outlined"
                         label="Ref Name"
                         value={reference.name}
                         onChange={(e) =>
@@ -243,12 +221,10 @@ const NewLoad: React.FC<Props> = (props) => {
                             name: e.target.value,
                           }))
                         }
-                        fullWidth
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} md>
                       <TextField
-                        variant="outlined"
                         label="Ref Value"
                         value={reference.value}
                         onChange={(e) =>
@@ -257,10 +233,9 @@ const NewLoad: React.FC<Props> = (props) => {
                             value: e.target.value,
                           }))
                         }
-                        fullWidth
                       />
                     </Grid>
-                    <Grid item xs={12} sm={12} md>
+                    <Grid item xs={12} sm={12} md sx={{ alignItems: "center" }}>
                       <Button
                         color="primary"
                         onClick={handleAddReference}
@@ -269,6 +244,33 @@ const NewLoad: React.FC<Props> = (props) => {
                         ADD
                       </Button>
                     </Grid>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <List>
+                      {!references.length && (
+                        <ListItem>
+                          <ListItemText
+                            primary={
+                              <Typography color="error">
+                                No load references
+                              </Typography>
+                            }
+                          />
+                        </ListItem>
+                      )}
+                      {references.map((ref, index) => (
+                        <ListItem divider key={index}>
+                          <ListItemText primary={`${ref.name}: ${ref.value}`} />
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              onClick={() => handleRemoveReference(ref.name)}
+                            >
+                              <Delete color="error" />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        </ListItem>
+                      ))}
+                    </List>
                   </Grid>
                 </CardContent>
               </Card>
@@ -281,62 +283,55 @@ const NewLoad: React.FC<Props> = (props) => {
                     <Button
                       aria-label="settings"
                       color="primary"
-                      onClick={() => setShowAddJob(true)}
+                      onClick={() => setShowJobModal(true)}
                       startIcon={<Add />}
                     >
                       Add
                     </Button>
                   }
                 />
-
-                <Divider />
                 <CardContent>
-                  <Grid container>
-                    <Grid item xs={12}>
-                      <FormControlLabel
-                        label="Is tonu?"
-                        control={
-                          <Switch
-                            name="isTonu"
-                            color="primary"
-                            onChange={(e) => setIsTonu(!isTonu)}
-                          />
-                        }
-                      />
-                    </Grid>
-                    <Grid item xs={12}>
-                      <List subheader={<ListSubheader>Job List</ListSubheader>}>
-                        {jobs
-                          .sort((a, b) => {
-                            if (a.type === "Pick" && b.type === "Drop") {
-                              return -1;
-                            } else if (a.type === "Drop" && b.type === "Pick") {
-                              return 1;
-                            } else {
-                              return 0;
-                            }
-                          })
-                          .map((job, index) => (
-                            <ListItem key={index} divider>
-                              <ListItemIcon>
-                                {job.type === "Pick" ? (
-                                  <PickJobIcon />
-                                ) : (
-                                  <DropJobIcon />
-                                )}
-                              </ListItemIcon>
-                              <ListItemText>
-                                {job.name}: {job.address.address1},{" "}
-                                {job.address.city}, {job.address.state}{" "}
-                                {job.address.zipCode}
-                              </ListItemText>
-                            </ListItem>
-                          ))}
-                      </List>
-                    </Grid>
-                  </Grid>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Type</TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Address</TableCell>
+                        <TableCell>Date</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {jobs.map((job, index) => (
+                        <TableRow key={index}>
+                          <TableCell>
+                            {job.type === "Drop" ? (
+                              <DropJobIcon />
+                            ) : (
+                              <PickJobIcon />
+                            )}
+                          </TableCell>
+                          <TableCell>{job.name}</TableCell>
+                          <TableCell>{formatAddress(job.address)}</TableCell>
+                          <TableCell>{job.date}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
+            </Grid>
+            <Grid item xs={12}>
+              <LineItemsView
+                data={lineItems}
+                actions={
+                  <Button
+                    onClick={() => setShowLineItemModal(true)}
+                    startIcon={<Add />}
+                  >
+                    Add
+                  </Button>
+                }
+              />
             </Grid>
             <Grid item xs={12}>
               <Card>
@@ -399,10 +394,17 @@ const NewLoad: React.FC<Props> = (props) => {
           </Grid>
         </form>
       </Box>
-      <JobsView
+      <JobsModal
+        show={showJobModal}
+        handleClose={() => setShowJobModal(false)}
         onSubmit={(values) => setJobs((prevState) => [...prevState, values])}
-        show={showAddJob}
-        handleClose={() => setShowAddJob(false)}
+      />
+      <LineItemModal
+        show={showLineItemModal}
+        handleClose={() => setShowLineItemModal(false)}
+        handleSubmit={(values) =>
+          setLineItems((prevState) => [...prevState, values])
+        }
       />
     </Layout>
   );
@@ -418,6 +420,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) =>
         brokers: await getBrokers(),
         drivers: await getDrivers(data.clientId),
         vehicles: await getVehicles(data.clientId),
+        branches: await getBranches(data.clientId),
       },
     }),
     "/"

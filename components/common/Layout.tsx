@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Navigation, Header } from "components/common";
-import { Container, CssBaseline, Theme, Toolbar } from "@material-ui/core";
-import { makeStyles, createStyles } from "@material-ui/core/styles";
+import { Theme, Toolbar } from "@material-ui/core";
+import { makeStyles, createStyles } from "@material-ui/styles";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,8 +20,6 @@ const Layout = (props) => {
   const [showDrawer, setShowDrawer] = useState(false);
   return (
     <div className={classes.root}>
-      <CssBaseline />
-
       <Header showDrawer={() => setShowDrawer(true)} />
       <Navigation open={showDrawer} onClose={() => setShowDrawer(false)} />
       <div className={classes.content}>

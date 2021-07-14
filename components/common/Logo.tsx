@@ -1,24 +1,22 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Typography, Box, Theme } from "@material-ui/core";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { Typography, Box, Icon } from "@material-ui/core";
+import { Whatshot } from "@material-ui/icons";
 
 import React from "react";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    icon: {
-      marginRight: theme.spacing(2),
-    },
-  })
-);
-
 const Logo = () => {
-  const classes = useStyles();
-
   return (
-    <Box display="flex" flexDirection="row" alignItems="center">
-      <Typography variant="h4" component="h1" className={classes.icon}>
-        <FontAwesomeIcon icon="crown" color="orange" fixedWidth />
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyItems: "center",
+      }}
+    >
+      <Icon color="primary">
+        <Whatshot />
+      </Icon>
+      <Typography variant="h4" component="h1">
         Crown TMS
       </Typography>
     </Box>

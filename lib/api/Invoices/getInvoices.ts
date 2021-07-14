@@ -7,6 +7,7 @@ const getInvoices = async (clientId: string) => {
     .collection("clients")
     .doc(clientId)
     .collection("invoices")
+    .where("status", "==", "Generated")
     .get();
   let invoicesData = [];
   for (const invoiceSnap of invoicesQuery.docs) {

@@ -5,15 +5,13 @@ import {
   Toolbar,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText,
   Theme,
   ListSubheader,
-  Typography,
   useMediaQuery,
   Divider,
+  useTheme,
 } from "@material-ui/core";
-import { createStyles, makeStyles, useTheme } from "@material-ui/core/styles";
 import {
   Business,
   Description,
@@ -26,32 +24,31 @@ import {
 import Link from "next/link";
 import { NavItem } from "components/common/Navigation";
 import Logo from "../Logo";
+import { makeStyles } from "@material-ui/styles";
 const drawerWidth = 240;
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: "flex",
-    },
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-    },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-    drawerPaper: {
-      width: drawerWidth,
-    },
-    drawerContainer: {
-      overflow: "auto",
-      padding: 20,
-    },
-    nestedNav: {
-      paddingLeft: theme.spacing(4),
-    },
-  })
-);
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    display: "flex",
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  drawerContainer: {
+    overflow: "auto",
+    padding: 20,
+  },
+  nestedNav: {
+    paddingLeft: theme.spacing(4),
+  },
+}));
 
 interface Props {
   open?: boolean;
@@ -151,12 +148,26 @@ const Navigation: React.FC<Props> = (props) => {
           <NavItem text="Accounting" icon={<Assessment />}>
             <Link href="/accounting/reports">
               <ListItem button>
-                <ListItemText className={classes.nestedNav}>Reports</ListItemText>
+                <ListItemText className={classes.nestedNav}>
+                  Reports
+                </ListItemText>
               </ListItem>
             </Link>
             <Link href="/accounting/driver-pay">
               <ListItem button>
-                <ListItemText className={classes.nestedNav}>Driver Pay</ListItemText>
+                <ListItemText className={classes.nestedNav}>
+                  Driver Pay
+                </ListItemText>
+              </ListItem>
+            </Link>
+          </NavItem>
+          {/* Settings */}
+          <NavItem text="Settings" icon={<Assessment />}>
+            <Link href="/settings/branches">
+              <ListItem button>
+                <ListItemText className={classes.nestedNav}>
+                  Branches
+                </ListItemText>
               </ListItem>
             </Link>
           </NavItem>

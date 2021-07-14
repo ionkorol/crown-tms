@@ -1,6 +1,6 @@
 import { Typography } from "@material-ui/core";
 import React from "react";
-import { Layout, Logo } from "../components/common";
+import { Layout, Logo } from "components/common";
 
 export default function Home() {
   return (

@@ -41,7 +41,7 @@ const DataTable: React.FC<Props> = (props) => {
       headerName: "Phone",
       flex: 1,
       valueFormatter: (params: GridValueFormatterParams) =>
-        formatPhone(params.value as any),
+        formatPhone(params.value as string),
     },
     {
       field: "email",

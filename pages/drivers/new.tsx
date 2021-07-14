@@ -1,15 +1,14 @@
 import {
   Grid,
-  Typography,
-  Breadcrumbs,
   Button,
   TextField,
   Card,
   CardContent,
   Box,
 } from "@material-ui/core";
-import { ArrowBack, ChevronRight } from "@material-ui/icons";
+import { ArrowBack } from "@material-ui/icons";
 import { Layout } from "components/common";
+import { Breadcrumbs } from "components/ui";
 import { getIn, useFormik } from "formik";
 import { useAuth } from "lib";
 import Link from "next/link";
@@ -70,27 +69,17 @@ const NewDriver = () => {
 
   return (
     <Layout>
-      <Grid container alignItems="center" justify="space-between">
-        <Grid item>
-          <Typography variant="h2">New Driver</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Link href="/drivers">Drivers</Link>
-            <Typography color="textPrimary">New Driver</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Link href="/drivers">
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<ArrowBack />}
-            >
-              Cancel
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
+      <Breadcrumbs
+        title="New Driver"
+        data={[{ title: "Drivers", url: "/drivers" }]}
+      >
+        <Link href="/drivers">
+          <Button variant="outlined" color="primary" startIcon={<ArrowBack />}>
+            Cancel
+          </Button>
+        </Link>
+      </Breadcrumbs>
+
       <Box className={classes.content}>
         <Card>
           <CardContent>

@@ -11,7 +11,9 @@ import {
   Button,
   DialogTitle,
 } from "@material-ui/core";
+import { DatePicker } from "@material-ui/lab";
 import { getIn, useFormik } from "formik";
+import { Moment } from "moment";
 import React from "react";
 
 import * as yup from "yup";
@@ -35,7 +37,7 @@ interface Props {
   handleClose: any;
 }
 
-const JobsView: React.FC<Props> = (props) => {
+const JobsModal: React.FC<Props> = (props) => {
   const { onSubmit, show, handleClose } = props;
 
   const formik = useFormik({
@@ -54,6 +56,7 @@ const JobsView: React.FC<Props> = (props) => {
     validationSchema: schema,
     onSubmit: (values) => onSubmit({ ...values }),
   });
+  console.log(formik.values.date);
 
   return (
     <Dialog open={show} onClose={handleClose}>
@@ -63,7 +66,6 @@ const JobsView: React.FC<Props> = (props) => {
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
                 label="Name"
                 name="name"
                 value={formik.values.name}
@@ -75,7 +77,6 @@ const JobsView: React.FC<Props> = (props) => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                variant="outlined"
                 label="Address"
                 name="address.address1"
                 value={formik.values.address.address1}
@@ -94,7 +95,6 @@ const JobsView: React.FC<Props> = (props) => {
 
             <Grid item xs={12} sm={6}>
               <TextField
-                variant="outlined"
                 label="City"
                 name="address.city"
                 value={formik.values.address.city}
@@ -105,7 +105,6 @@ const JobsView: React.FC<Props> = (props) => {
             </Grid>
             <Grid item xs={12} sm={3}>
               <TextField
-                variant="outlined"
                 label="State"
                 name="address.state"
                 value={formik.values.address.state}
@@ -116,7 +115,6 @@ const JobsView: React.FC<Props> = (props) => {
             </Grid>
             <Grid item xs={12} sm={3}>
               <TextField
-                variant="outlined"
                 label="ZipCode"
                 name="address.zipCode"
                 value={formik.values.address.zipCode}
@@ -126,21 +124,19 @@ const JobsView: React.FC<Props> = (props) => {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
+              <DatePicker
                 label="Date"
-                name="date"
                 value={formik.values.date}
-                onChange={formik.handleChange}
-                error={!!formik.errors.date}
-                fullWidth
+                onChange={(value: Moment) =>
+                  formik.setFieldValue("date", value.format("l"))
+                }
+                renderInput={(params) => <TextField {...params} />}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl variant="outlined" fullWidth className="mb-3">
                 <InputLabel>Type</InputLabel>
                 <Select
-                  variant="outlined"
                   label="Type"
                   name="type"
                   value={formik.values.type}
@@ -173,4 +169,4 @@ const JobsView: React.FC<Props> = (props) => {
   );
 };
 
-export default JobsView;
+export default JobsModal;

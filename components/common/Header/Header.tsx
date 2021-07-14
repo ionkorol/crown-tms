@@ -1,8 +1,9 @@
-import { AppBar, Theme, Toolbar, useMediaQuery } from "@material-ui/core";
-import { createStyles, makeStyles, useTheme } from "@material-ui/core/styles";
+import { AppBar, Box, Theme, Toolbar, useMediaQuery } from "@material-ui/core";
 import React from "react";
 import { Logo } from "components/common";
 import { NavToggle, User } from "components/common/Header";
+import { makeStyles, createStyles } from "@material-ui/styles";
+import { useTheme } from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -10,9 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: theme.zIndex.drawer + 1,
       boxShadow: "none",
       borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
-    },
-    logo: {
-      flexGrow: 1,
+      background: theme.palette.secondary.main,
     },
   })
 );
@@ -28,9 +27,7 @@ const Header: React.FC<Props> = (props) => {
   return (
     <AppBar position="fixed" className={classes.appBar} color="secondary">
       <Toolbar>
-        <div className={classes.logo}>
-          {matches ? <NavToggle toggle={showDrawer} /> : <Logo />}
-        </div>
+        {matches ? <NavToggle toggle={showDrawer} /> : <Logo />}
         <User />
       </Toolbar>
     </AppBar>
