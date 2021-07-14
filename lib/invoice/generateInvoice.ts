@@ -93,13 +93,9 @@ const generatePDF = async (data: InvoiceProp) => {
 
   doc.setFontSize(12);
   doc.setFont("verdana");
-  doc.text(formatCurrency(data.load.rate), 95, 220);
+  doc.text("rate", 95, 220);
   doc.setFont("verdana", "bold");
-  doc.text(
-    formatCurrency(handleTotal(load.rate, data.additionalItems)),
-    95,
-    235
-  );
+  doc.text("total", 95, 235);
 
   doc.setFontSize(10);
   doc.setFont("verdana", "italic");
