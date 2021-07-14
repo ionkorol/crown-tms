@@ -1,14 +1,15 @@
 import React from "react";
 import { GetServerSideProps } from "next";
 import { Layout } from "components/common";
-import { LoadProp, VehicleProp } from "utils/interfaces";
+import { VehicleProp } from "utils/interfaces";
 import { DataTable } from "components/vehicles";
 import Link from "next/link";
-import { Box, Breadcrumbs, Button, Grid, Typography } from "@material-ui/core";
-import { Add, ChevronRight } from "@material-ui/icons";
+import { Box, Button } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 import { isAuthenticated } from "lib/api/Users";
 import { getVehicles } from "lib/api/Vehicles";
 import { useStyles } from "styles";
+import { Breadcrumbs } from "components/ui";
 
 interface Props {
   data: VehicleProp[];
@@ -20,22 +21,13 @@ const Vehicles: React.FC<Props> = (props) => {
 
   return (
     <Layout>
-      <Grid container justify="space-between" alignItems="center">
-        <Grid item>
-          <Typography variant="h2">Vehicles</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Typography color="textPrimary">Vehicles</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Link href="/vehicles/new">
-            <Button variant="contained" color="primary" startIcon={<Add />}>
-              New Load
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
+      <Breadcrumbs title="Vehicles">
+        <Link href="/vehicles/new" passHref>
+          <Button variant="contained" color="primary" startIcon={<Add />}>
+            New Load
+          </Button>
+        </Link>
+      </Breadcrumbs>
       <Box className={classes.content}>
         <DataTable data={data} />
       </Box>
