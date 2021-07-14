@@ -1,6 +1,5 @@
 import {
   Grid,
-  Breadcrumbs,
   Typography,
   Button,
   Card,
@@ -12,53 +11,39 @@ import {
   Divider,
   CardActions,
   Box,
-  makeStyles,
-  createStyles,
-  Theme,
 } from "@material-ui/core";
-import { ChevronRight, Edit } from "@material-ui/icons";
+import { Edit } from "@material-ui/icons";
 import { Layout } from "components/common";
+import { Breadcrumbs } from "components/ui";
 import { formatAddress } from "lib";
 import { getBroker } from "lib/api/Brokers";
 import { isAuthenticated } from "lib/api/Users";
 import { GetServerSideProps } from "next";
 import Link from "next/link";
 import React from "react";
+import { useStyles } from "styles";
 import { BrokerProp } from "utils/interfaces";
 
 interface Props {
   data: BrokerProp;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    content: {
-      marginTop: theme.spacing(5),
-    },
-  })
-);
-
 const Broker: React.FC<Props> = (props) => {
   const { data } = props;
   const classes = useStyles();
   return (
     <Layout>
-      <Grid container justify="space-between" alignItems="center">
-        <Grid item>
-          <Typography variant="h2">Broker Details</Typography>
-          <Breadcrumbs separator={<ChevronRight />}>
-            <Link href="/">Dashboard</Link>
-            <Typography color="textPrimary">Brokers</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Link href="/brokers/new">
-            <Button variant="contained" color="primary" startIcon={<Edit />}>
-              Edit Broker
-            </Button>
-          </Link>
-        </Grid>
-      </Grid>
+      <Breadcrumbs
+        title="Broker Details"
+        data={[{ title: "Brokers", url: "/brokers" }]}
+      >
+        <Link href="/brokers/new">
+          <Button variant="contained" color="primary" startIcon={<Edit />}>
+            Edit Broker
+          </Button>
+        </Link>
+      </Breadcrumbs>
+
       <Box className={classes.content}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
