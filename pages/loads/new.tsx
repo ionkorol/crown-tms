@@ -132,7 +132,7 @@ const NewLoad: React.FC<Props> = (props) => {
   return (
     <Layout>
       <Breadcrumbs title="New Load" data={[{ title: "Loads", url: "/loads" }]}>
-        <Link href="/loads">
+        <Link href="/loads" passHref>
           <Button variant="outlined" color="primary" startIcon={<ArrowBack />}>
             Cancel
           </Button>
@@ -182,32 +182,24 @@ const NewLoad: React.FC<Props> = (props) => {
                     </Grid>
                     <Grid item xs={12}>
                       <Autocomplete
-                        autoHighlight
                         value={broker}
                         onChange={(e, newValue: BrokerProp | null) =>
                           setBroker(newValue)
                         }
                         options={brokers}
                         getOptionLabel={(option) =>
-                          `${option.name}(${option.dba})`
+                          `${option.name} (${option.dba})`
                         }
-                        renderOption={(props, option) => (
-                          <Box>
-                            <Typography>{option.name}</Typography>
-                            <Typography variant="caption" color="textSecondary">
-                              {option.dba}
-                            </Typography>
-                          </Box>
-                        )}
+                        // renderOption={(props, option) => (
+                        //   <Box>
+                        //     <Typography>{option.name}</Typography>
+                        //     <Typography variant="caption" color="textSecondary">
+                        //       {option.dba}
+                        //     </Typography>
+                        //   </Box>
+                        // )}
                         renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label="Select Broker"
-                            inputProps={{
-                              ...params.inputProps,
-                              autoComplete: "new-password", // disable autocomplete and autofill
-                            }}
-                          />
+                          <TextField {...params} label="Select Broker" />
                         )}
                       />
                     </Grid>
