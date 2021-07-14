@@ -25,7 +25,10 @@ const MyApp = ({ Component, pageProps }) => {
   return (
     <CacheProvider value={cache}>
       <ThemeProvider theme={theme}>
-        <LocalizationProvider dateAdapter={AdapterDateMoment} dateFormats={{normalDate: 'MM/DD/YYYY'}}>
+        <LocalizationProvider
+          dateAdapter={AdapterDateMoment}
+          dateFormats={{ normalDate: "MM/DD/YYYY" }}
+        >
           <SnackProvider>
             <AuthProvider>
               <PageLoading />
