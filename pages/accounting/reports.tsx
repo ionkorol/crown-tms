@@ -1,18 +1,9 @@
-import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  createStyles,
-  makeStyles,
-  Theme,
-} from "@material-ui/core";
+import { Button, Card, CardContent, CardHeader } from "@material-ui/core";
 import { Layout } from "components/common";
 import { useAuth } from "lib";
-import { getInvoices } from "lib/api/Invoices";
 import { isAuthenticated } from "lib/api/Users";
 import { GetServerSideProps } from "next";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Bar,
   BarChart,
@@ -24,19 +15,10 @@ import {
 } from "recharts";
 import { InvoiceProp } from "utils/interfaces";
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    chart: {
-      width: 900,
-      height: 600,
-    },
-  })
-);
-
 interface Props {
   data: InvoiceProp[];
 }
-const reports: React.FC<Props> = (props) => {
+const Reports: React.FC<Props> = (props) => {
   const { data } = props;
   const [mgr, setMGR] = useState<{ [key: string]: number }[]>([]);
   const auth = useAuth();
@@ -85,7 +67,7 @@ const reports: React.FC<Props> = (props) => {
   );
 };
 
-export default reports;
+export default Reports;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) =>
   await isAuthenticated(ctx, () => ({ props: {} }), "/");
