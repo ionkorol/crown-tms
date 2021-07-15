@@ -144,12 +144,20 @@ const generatePDF = async (data: InvoiceProp) => {
 
   doc.setFontSize(15);
   doc.setFont("courier");
-  doc.text("Confirmed Rate:", 15, 220);
+
   doc.text("Balance to Pay:", 15, 235);
+
+  for (const [index, lineItem] of load.lineItems.entries()) {
+    doc.text(lineItem.title, 15, 225 - index * 10);
+  }
 
   doc.setFontSize(12);
   doc.setFont("verdana");
-  doc.text(formatCurrency(handleTotal(data.load.lineItems)), 95, 220);
+
+  for (const [index, lineItem] of load.lineItems.entries()) {
+    doc.text(formatCurrency(lineItem.total), 95, 225 - index * 10);
+  }
+
   doc.setFont("verdana", "bold");
   doc.text(formatCurrency(handleTotal(data.load.lineItems)), 95, 235);
 
