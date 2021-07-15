@@ -26,8 +26,7 @@ const generatePDF = async (data: InvoiceProp) => {
 
   doc.text(branch.name, 15, 15);
   doc.setFont("courier");
-  doc.text(`TERMS`, 95, 15);
-  doc.text(broker.terms, 130, 15);
+  doc.text(`TERMS: ${broker.terms}`, 95, 15);
 
   doc.setFont("verdana", "normal");
   doc.setFontSize(10);
