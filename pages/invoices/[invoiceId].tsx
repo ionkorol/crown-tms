@@ -92,7 +92,7 @@ const Invoice: React.FC<Props> = (props) => {
                 <br />
                 <Typography>{branch.accountingEmail}</Typography>
               </Grid>
-              <Grid item md={6} direction="row">
+              <Grid item md={6}>
                 <Typography variant="h3">Invoice# {data.id}</Typography>
                 <StatusBadge data={data.status} />
               </Grid>

@@ -119,13 +119,18 @@ export interface ClientBranchProp {
   accountingEmail: string;
 }
 
-export interface FileProp {
+export interface DocumentProp {
   id?: string;
   createdAt: number;
   type: "RC" | "BOL" | "POD" | "Invoice";
-  fileName: string;
   uploadedBy: string;
   ref: string;
+  entity: EntityProp;
+}
+
+export interface EntityProp {
+  type: "Load" | "Invoice" | "Driver" | "Vehicle";
+  id: string;
 }
 
 export interface DriverProp {

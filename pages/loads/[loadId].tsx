@@ -26,7 +26,7 @@ import {
 } from "@material-ui/core";
 import Link from "next/link";
 import { DropJobIcon, PickJobIcon } from "components/ui/Icons";
-import { FilesView, LineItemsView } from "components/load";
+import { NewDocumentModal, LineItemsView } from "components/load";
 import { formatAddress, useAuth, useSnack } from "lib";
 import { isAuthenticated } from "lib/api/Users";
 import { getLoad } from "lib/api/Loads";
@@ -81,7 +81,7 @@ const Load: React.FC<Props> = (props) => {
                 <Button onClick={handleSendToAccounting}>
                   Send To Accounting
                 </Button>
-                <Link href={`/invoices/${data.id}`}>
+                <Link href={`/invoices/${data.id}`} passHref>
                   <Button>View Invoice</Button>
                 </Link>
                 <Button onClick={() => setShowFiles(true)}>Manage Files</Button>
@@ -251,10 +251,10 @@ const Load: React.FC<Props> = (props) => {
           </Grid>
         </Grid>
       </Box>
-      <FilesView
+      <NewDocumentModal
         show={showFiles}
         onClose={() => setShowFiles(false)}
-        loadId={data.id}
+        entity={{ type: "Load", id: String(data.id) }}
       />
     </Layout>
   );
