@@ -36,7 +36,7 @@ import {
   TableCell,
   TableBody,
 } from "@material-ui/core";
-import { formatAddress, useAuth } from "lib";
+import { formatAddress, useAuth, useSnack } from "lib";
 
 import { ArrowBack, Delete, Add } from "@material-ui/icons";
 import { DropJobIcon, PickJobIcon } from "components/ui/Icons";
@@ -79,6 +79,7 @@ const NewLoad: React.FC<Props> = (props) => {
   const classes = useStyles();
   const router = useRouter();
   const auth = useAuth();
+  const snack = useSnack();
 
   const handleAddReference = () => {
     if (references.some((item) => item.name === reference.name)) {
@@ -118,14 +119,14 @@ const NewLoad: React.FC<Props> = (props) => {
       });
 
       const data = await res.json();
-      if (data.id) {
-        alert(data.id);
-        router.push(`/loads/${data.id}`);
+      if (data) {
+        snack.generate("Load Successfuly Created", "success");
+        router.push("/loads");
       } else {
-        alert("Error");
+        snack.generate("Load Creating Error", "error");
       }
     } catch (error) {
-      alert(error);
+      snack.generate("Load Creating Error", "error");
     }
   };
 

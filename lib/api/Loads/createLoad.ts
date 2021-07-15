@@ -21,7 +21,7 @@ const createLoad = async (clientId: string, data: LoadProp) => {
       notes: [],
     } as LoadProp);
 
-    return true;
+    return currentId;
   } catch (error) {
     return false;
   }

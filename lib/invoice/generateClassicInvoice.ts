@@ -7,7 +7,7 @@ import "assets/verdana-italic";
 import "assets/impact-bold";
 
 const generatePDF = async (data: InvoiceProp) => {
-  const { broker, load } = data;
+  const { broker, load, branch } = data;
 
   const picks = load.jobs.filter((job) => job.type === "Pick");
   const drops = load.jobs.filter((job) => job.type === "Drop");
@@ -24,22 +24,22 @@ const generatePDF = async (data: InvoiceProp) => {
   doc.setFontSize(15);
   doc.setFont("impact", "bold");
 
-  doc.text("J EXPRESS LLC", 15, 15);
+  doc.text(branch.name, 15, 15);
   doc.setFont("courier");
   doc.text(`TERMS`, 95, 15);
-  doc.text(data.broker.terms, 130, 15);
+  doc.text(broker.terms, 130, 15);
 
   doc.setFont("verdana", "normal");
   doc.setFontSize(10);
   doc.text(
     [
-      "4607 PINECREST DR",
-      "BUFORD, GA 30518",
+      branch.address.address1,
+      `${branch.address.city}, ${branch.address.state} ${branch.address.zipCode}`,
       "",
-      "678-482-0071 phone",
-      "877-828-2599 fax",
+      `${branch.phone} phone`,
+      branch.fax.trimStart() ? `${branch.fax} fax` : "",
       "",
-      "JXbilling@gmail.com",
+      branch.accountingEmail,
     ],
     15,
     20
